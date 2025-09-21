@@ -3,729 +3,316 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>US号码管家 - 企业级号码管理平台</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>US号码管家 - 支持随机导出功能</title>
   <style>
-    /* 全局基础样式与主题变量 */
-    :root {
-      --primary: #409eff;
-      --primary-light: #e6f7ff;
-      --primary-dark: #1890ff;
-      --success: #52c41a;
-      --success-light: #f6ffed;
-      --warning: #faad14;
-      --warning-light: #fffbe6;
-      --danger: #ff4d4f;
-      --danger-light: #fff2f0;
-      --text-primary: #1f2937;
-      --text-secondary: #6b7280;
-      --text-tertiary: #9ca3af;
-      --border: #e5e7eb;
-      --bg-light: #f9fafb;
-      --bg-white: #ffffff;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
-      --shadow: 0 2px 8px rgba(0,0,0,0.08);
-      --shadow-lg: 0 4px 16px rgba(0,0,0,0.12);
-      --radius-sm: 6px;
-      --radius: 8px;
-      --radius-lg: 12px;
-      --transition: all 0.25s ease;
-    }
-
+    /* 全局基础样式 */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Inter', 'system-ui', '微软雅黑', sans-serif;
+      font-family: 'Arial Rounded MT Bold', '微软雅黑', sans-serif;
     }
-
     body {
-      background-color: var(--bg-light);
-      color: var(--text-primary);
+      background-color: #f9fafb;
+      padding: 20px;
+      color: #1f2937;
       line-height: 1.5;
-      font-size: 14px;
-      padding: 0;
-      min-height: 100vh;
     }
-
-    /* 页面容器与布局 */
-    .app-container {
-      display: flex;
-      min-height: 100vh;
-    }
-
-    .sidebar {
-      width: 240px;
-      background-color: var(--bg-white);
-      border-right: 1px solid var(--border);
-      padding: 1.5rem 0;
-      display: flex;
-      flex-direction: column;
-      transition: var(--transition);
-      z-index: 100;
-    }
-
-    .sidebar.collapsed {
-      width: 64px;
-    }
-
-    .main-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .content-wrapper {
-      flex: 1;
-      padding: 1.5rem;
-      overflow-y: auto;
-    }
-
-    /* 页面切换动画 */
     .page {
       display: none;
-      animation: fadeIn 0.3s ease forwards;
     }
-
     .page.active {
       display: block;
+      animation: fadeIn 0.3s ease;
     }
-
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
-    /* 卡片与容器样式 */
+    /* 卡片与容器 */
     .card {
-      background: var(--bg-white);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow);
-      padding: 1.25rem;
-      margin-bottom: 1.25rem;
-      transition: var(--transition);
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      padding: 20px;
+      margin-bottom: 20px;
     }
-
-    .card:hover {
-      box-shadow: var(--shadow-lg);
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
     }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .card-title {
+    .section-title {
       font-size: 16px;
+      margin-bottom: 15px;
+      color: #303133;
       font-weight: 600;
-      color: var(--text-primary);
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    /* 按钮样式升级 */
+    /* 按钮样式 */
     .btn {
-      padding: 8px 16px;
-      border-radius: var(--radius);
+      padding: 7px 14px;
+      border-radius: 8px;
       border: none;
       cursor: pointer;
       font-size: 14px;
-      font-weight: 500;
       display: inline-flex;
       align-items: center;
-      justify-content: center;
       gap: 6px;
-      transition: var(--transition);
-      height: 36px;
-      min-width: 80px;
+      transition: all 0.2s;
     }
-
     .btn:hover {
       transform: translateY(-1px);
-      box-shadow: var(--shadow);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-
-    .btn:active {
-      transform: translateY(0);
-    }
-
     .btn-primary {
-      background-color: var(--primary);
+      background-color: #409eff;
       color: white;
     }
-
-    .btn-primary:hover {
-      background-color: var(--primary-dark);
-    }
-
     .btn-success {
-      background-color: var(--success);
+      background-color: #67c23a;
       color: white;
     }
-
-    .btn-success:hover {
-      background-color: #4aa918;
-    }
-
-    .btn-warning {
-      background-color: var(--warning);
-      color: white;
-    }
-
-    .btn-warning:hover {
-      background-color: #e69c00;
-    }
-
-    .btn-danger {
-      background-color: var(--danger);
-      color: white;
-    }
-
-    .btn-danger:hover {
-      background-color: #e04344;
-    }
-
     .btn-default {
-      background-color: var(--bg-white);
-      color: var(--text-secondary);
-      border: 1px solid var(--border);
+      background-color: #f5f7fa;
+      color: #606266;
     }
-
-    .btn-default:hover {
-      background-color: var(--bg-light);
+    .btn-danger {
+      background-color: #f56c6c;
+      color: white;
     }
-
     .btn-sm {
-      padding: 4px 12px;
-      height: 32px;
-      font-size: 13px;
-      min-width: auto;
+      padding: 4px 10px;
+      font-size: 12px;
     }
 
-    .btn-icon {
-      width: 36px;
-      height: 36px;
-      padding: 0;
-      min-width: auto;
-      border-radius: 50%;
-    }
-
-    /* 输入框与选择器优化 */
-    .input, .select, .textarea {
-      padding: 8px 12px;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
+    /* 输入框与选择器 */
+    .input, .select {
+      padding: 7px 12px;
+      border-radius: 8px;
+      border: 1px solid #e4e7ed;
       font-size: 14px;
       width: 100%;
-      transition: var(--transition);
-      height: 36px;
-      background-color: var(--bg-white);
+      transition: border 0.2s;
     }
-
-    .textarea {
-      min-height: 80px;
-      resize: vertical;
-      line-height: 1.5;
-      padding-top: 10px;
-    }
-
-    .input:focus, .select:focus, .textarea:focus {
-      border-color: var(--primary);
+    .input:focus, .select:focus {
+      border-color: #409eff;
       outline: none;
-      box-shadow: 0 0 0 3px var(--primary-light);
+      box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
     }
-
     .input-search {
       flex: 1;
       max-width: 400px;
-      position: relative;
     }
-
-    .input-search::placeholder {
-      color: var(--text-tertiary);
-    }
-
     .form-row {
       display: flex;
-      gap: 1rem;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 20px;
     }
-
     .form-col {
       flex: 1;
-      min-width: 200px;
+    }
+    @media (max-width: 992px) {
+      .form-row {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .form-col {
+        flex: 0 0 48%;
+      }
+    }
+    @media (max-width: 768px) {
+      .form-col {
+        flex: 0 0 100%;
+      }
     }
 
-    /* 顶部导航栏 */
+    /* 顶部导航 */
     .header {
-      height: 64px;
-      background-color: var(--bg-white);
-      border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 1.5rem;
-      box-shadow: var(--shadow-sm);
-      z-index: 90;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #f0f2f5;
     }
-
     .logo {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--primary);
+      font-size: 22px;
+      font-weight: bold;
+      color: #409eff;
     }
-
     .logo-icon {
-      width: 36px;
-      height: 36px;
-      background-color: var(--primary);
-      border-radius: var(--radius);
+      width: 30px;
+      height: 30px;
+      background-color: #409eff;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       font-size: 18px;
     }
-
     .header-actions {
       display: flex;
-      align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
-
-    .user-info {
+    .main-nav {
       display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 4px 12px;
-      border-radius: 18px;
-      background-color: var(--bg-light);
-      cursor: pointer;
-      transition: var(--transition);
+      gap: 10px;
+      margin-bottom: 20px;
     }
 
-    .user-info:hover {
-      background-color: var(--primary-light);
-    }
-
-    .user-avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background-color: var(--primary-light);
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-    }
-
-    /* 侧边栏导航 */
-    .sidebar-menu {
-      list-style: none;
-      margin-top: 1.5rem;
-    }
-
-    .sidebar-menu-item {
-      margin-bottom: 4px;
-    }
-
-    .sidebar-menu-link {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 1.25rem;
-      color: var(--text-secondary);
-      text-decoration: none;
-      font-weight: 500;
-      border-left: 3px solid transparent;
-      transition: var(--transition);
-    }
-
-    .sidebar-menu-link:hover {
-      background-color: var(--bg-light);
-      color: var(--primary);
-    }
-
-    .sidebar-menu-link.active {
-      background-color: var(--primary-light);
-      color: var(--primary);
-      border-left-color: var(--primary);
-    }
-
-    .sidebar-menu-icon {
-      font-size: 18px;
-      width: 20px;
-      text-align: center;
-    }
-
-    .sidebar-collapse {
-      margin-top: auto;
-      display: flex;
-      justify-content: center;
-      padding: 12px;
-    }
-
-    .sidebar-collapse-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background-color: var(--bg-light);
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: var(--transition);
-      color: var(--text-secondary);
-    }
-
-    .sidebar-collapse-btn:hover {
-      background-color: var(--primary-light);
-      color: var(--primary);
-    }
-
-    /* 筛选区优化 */
+    /* 筛选区 */
     .filter-bar {
       display: flex;
-      gap: 1rem;
+      gap: 15px;
       align-items: center;
       flex-wrap: wrap;
-      margin-bottom: 1rem;
-      padding: 0.75rem 1rem;
-      background-color: var(--bg-white);
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
+      margin-bottom: 10px;
     }
 
-    .filter-actions {
-      display: flex;
-      gap: 0.5rem;
-      margin-left: auto;
-    }
-
-    .saved-filters {
-      position: relative;
-    }
-
-    .saved-filters-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .filter-dropdown {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      width: 200px;
-      background-color: var(--bg-white);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-lg);
-      margin-top: 4px;
-      z-index: 10;
-      overflow: hidden;
-      display: none;
-    }
-
-    .filter-dropdown.show {
-      display: block;
-      animation: fadeIn 0.2s ease forwards;
-    }
-
-    .filter-dropdown-item {
-      padding: 8px 12px;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .filter-dropdown-item:hover {
-      background-color: var(--primary-light);
-      color: var(--primary);
-    }
-
-    .filter-dropdown-divider {
-      height: 1px;
-      background-color: var(--border);
-      margin: 4px 0;
-    }
-
-    /* 表格样式升级 */
+    /* 表格样式 */
     .table {
       width: 100%;
       border-collapse: collapse;
       font-size: 14px;
-      border-radius: var(--radius-lg);
-      overflow: hidden;
     }
-
-    .table-wrapper {
-      overflow-x: auto;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      background-color: var(--bg-white);
-    }
-
     .table th, .table td {
       padding: 12px 15px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
+      text-align: center;
+      border-bottom: 1px solid #f0f2f5;
       white-space: nowrap;
-      transition: var(--transition);
     }
-
     .table th {
-      background-color: var(--bg-light);
+      background-color: #f5f7fa;
       font-weight: 600;
-      color: var(--text-secondary);
-      position: relative;
-      user-select: none;
+      color: #303133;
     }
-
     .table th:hover {
-      background-color: #f1f5f9;
+      background-color: #eef3fa;
     }
-
-    .table th.sortable {
-      cursor: pointer;
-      padding-right: 24px;
-    }
-
-    .table th.sortable::after {
-      content: "\f0dc";
-      font-family: "Font Awesome 6 Free";
-      font-weight: 900;
-      position: absolute;
-      right: 10px;
-      font-size: 12px;
-      color: var(--text-tertiary);
-    }
-
-    .table th.sort-asc::after {
-      content: "\f0de";
-      color: var(--primary);
-    }
-
-    .table th.sort-desc::after {
-      content: "\f0dd";
-      color: var(--primary);
-    }
-
     .table tr:hover {
-      background-color: var(--primary-light);
+      background-color: #ecf5ff;
     }
-
-    .table tr:last-child td {
-      border-bottom: none;
-    }
-
     .phone-number {
-      font-family: 'SFMono-Regular', Consolas, monospace;
-      color: var(--text-primary);
-      font-weight: 500;
+      font-family: 'Courier New', Courier, monospace;
+      color: #303133;
+    }
+    .table-container {
+      overflow-x: auto;
     }
 
-    /* 状态标签样式 */
-    .status-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 500;
-    }
-
+    /* 状态样式 */
     .status-used {
-      background-color: var(--success-light);
-      color: var(--success);
+      color: #67c23a;
+      font-weight: 500;
     }
-
+    .status-used::before {
+      content: "●";
+      margin-right: 5px;
+      font-size: 16px;
+    }
     .status-unused {
-      background-color: var(--warning-light);
-      color: var(--warning);
+      color: #909399;
+    }
+    .status-unused::before {
+      content: "●";
+      margin-right: 5px;
+      font-size: 16px;
     }
 
-    .status-disabled {
-      background-color: var(--danger-light);
-      color: var(--danger);
-    }
-
-    /* 操作按钮组 */
-    .oper-group {
-      display: flex;
-      gap: 4px;
-    }
-
+    /* 操作按钮 */
     .oper-btn {
-      color: var(--text-secondary);
+      color: #409eff;
       background: none;
       border: none;
       cursor: pointer;
-      padding: 4px 8px;
-      border-radius: var(--radius-sm);
+      margin: 0 5px;
+      font-size: 14px;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    .oper-btn:hover {
+      background-color: #ecf5ff;
+    }
+    .oper-btn-danger {
+      color: #f56c6c;
+    }
+    .oper-btn-danger:hover {
+      background-color: #fef0f0;
+    }
+
+    /* 统计信息 */
+    .stats {
+      margin-bottom: 15px;
+      color: #606266;
       font-size: 14px;
       display: flex;
       align-items: center;
-      gap: 4px;
-      transition: var(--transition);
-    }
-
-    .oper-btn:hover {
-      background-color: var(--primary-light);
-      color: var(--primary);
-    }
-
-    .oper-btn-danger {
-      color: var(--danger);
-    }
-
-    .oper-btn-danger:hover {
-      background-color: var(--danger-light);
-      color: var(--danger);
-    }
-
-    /* 统计信息卡片 */
-    .stats-container {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1.25rem;
+      gap: 10px;
       flex-wrap: wrap;
     }
-
-    .stat-card {
-      flex: 1;
-      min-width: 200px;
-      background-color: var(--bg-white);
-      border-radius: var(--radius-lg);
-      padding: 1rem;
-      box-shadow: var(--shadow);
-      border-top: 3px solid var(--primary);
-      transition: var(--transition);
-    }
-
-    .stat-card:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .stat-card.success {
-      border-top-color: var(--success);
-    }
-
-    .stat-card.warning {
-      border-top-color: var(--warning);
-    }
-
-    .stat-card.danger {
-      border-top-color: var(--danger);
-    }
-
-    .stat-title {
-      font-size: 13px;
-      color: var(--text-secondary);
-      margin-bottom: 8px;
+    .stats span {
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 12px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
+    }
+    .stats-used {
+      background-color: #f0f9eb;
+      color: #67c23a;
+    }
+    .stats-unused {
+      background-color: #f5f7fa;
+      color: #909399;
     }
 
-    .stat-value {
-      font-size: 24px;
-      font-weight: 600;
-      color: var(--text-primary);
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-    }
-
-    .stat-change {
-      font-size: 12px;
-      padding: 1px 6px;
-      border-radius: 4px;
-    }
-
-    .stat-change.positive {
-      background-color: var(--success-light);
-      color: var(--success);
-    }
-
-    .stat-change.negative {
-      background-color: var(--danger-light);
-      color: var(--danger);
-    }
-
-    .stat-desc {
-      font-size: 12px;
-      color: var(--text-tertiary);
-      margin-top: 6px;
-    }
-
-    /* 表单样式优化 */
+    /* 表单样式 */
     .form {
       max-width: 800px;
       margin: 0 auto;
     }
-
     .form-item {
-      margin-bottom: 1.25rem;
+      margin-bottom: 20px;
     }
-
     .form-label {
       display: block;
       margin-bottom: 8px;
       font-weight: 500;
-      color: var(--text-primary);
+      color: #303133;
     }
-
     .form-hint {
       margin-top: 5px;
       font-size: 12px;
-      color: var(--text-tertiary);
-      display: flex;
-      align-items: center;
-      gap: 4px;
+      color: #909399;
     }
-
     .form-actions {
       display: flex;
       justify-content: flex-end;
       gap: 10px;
-      margin-top: 2rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border);
+      margin-top: 30px;
     }
-
     .form-note {
-      color: var(--danger);
+      color: #f56c6c;
       font-size: 12px;
       margin-top: 5px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
     }
 
-    /* 时间线样式升级 */
+    /* 时间线样式 */
     .timeline {
       position: relative;
       max-width: 800px;
       margin: 0 auto;
-      padding-left: 28px;
+      padding-left: 30px;
     }
-
     .timeline::before {
       content: '';
       position: absolute;
@@ -733,134 +320,80 @@
       top: 0;
       bottom: 0;
       width: 2px;
-      background-color: var(--border);
+      background-color: #e4e7ed;
     }
-
     .timeline-item {
       position: relative;
-      margin-bottom: 1.5rem;
-      padding-bottom: 0.5rem;
+      margin-bottom: 30px;
     }
-
     .timeline-dot {
       position: absolute;
-      left: -28px;
+      left: -30px;
       top: 3px;
       width: 20px;
       height: 20px;
       border-radius: 50%;
-      background-color: var(--primary);
+      background-color: #409eff;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       font-size: 10px;
-      box-shadow: 0 0 0 3px var(--primary-light);
     }
-
     .timeline-dot.used {
-      background-color: var(--success);
-      box-shadow: 0 0 0 3px var(--success-light);
+      background-color: #67c23a;
     }
-
     .timeline-dot.unused {
-      background-color: var(--warning);
-      box-shadow: 0 0 0 3px var(--warning-light);
+      background-color: #909399;
     }
-
-    .timeline-dot.deleted {
-      background-color: var(--danger);
-      box-shadow: 0 0 0 3px var(--danger-light);
-    }
-
     .timeline-content {
-      background-color: var(--bg-white);
-      border-radius: var(--radius);
-      padding: 1rem;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-      transition: var(--transition);
+      background-color: white;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      border: 1px solid #f0f2f5;
     }
-
-    .timeline-content:hover {
-      box-shadow: var(--shadow-lg);
-      transform: translateX(3px);
-    }
-
-    .timeline-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
     .timeline-time {
-      color: var(--text-tertiary);
+      color: #909399;
       font-size: 12px;
+      margin-bottom: 5px;
     }
-
-    .timeline-action {
-      font-size: 12px;
-      font-weight: 500;
-      padding: 2px 8px;
-      border-radius: 4px;
-    }
-
     .timeline-title {
       font-weight: 500;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
-
     .timeline-detail {
       font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.6;
+      color: #606266;
     }
 
-    /* 提示框和加载动画优化 */
+    /* 提示框和加载动画 */
     .toast {
       position: fixed;
       top: 20px;
-      right: 20px;
-      transform: translateX(120%);
-      padding: 12px 16px;
-      border-radius: var(--radius);
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 20px;
+      border-radius: 8px;
       background-color: rgba(0,0,0,0.8);
       color: white;
       font-size: 14px;
       z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s;
       display: flex;
       align-items: center;
       gap: 8px;
-      box-shadow: var(--shadow-lg);
-      transition: transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-      max-width: 360px;
     }
-
     .toast.show {
-      transform: translateX(0);
+      opacity: 1;
     }
-
     .toast-success {
-      background-color: var(--success);
-      border-left: 4px solid #389e0d;
+      background-color: rgba(103, 194, 58, 0.9);
     }
-
     .toast-error {
-      background-color: var(--danger);
-      border-left: 4px solid #cf1322;
+      background-color: rgba(245, 108, 108, 0.9);
     }
-
-    .toast-warning {
-      background-color: var(--warning);
-      border-left: 4px solid #d48806;
-    }
-
-    .toast-info {
-      background-color: var(--primary);
-      border-left: 4px solid #096dd9;
-    }
-
     .loading {
       position: fixed;
       top: 0;
@@ -874,34 +407,24 @@
       align-items: center;
       flex-direction: column;
       gap: 15px;
-      backdrop-filter: blur(2px);
     }
-
     .loading.show {
       display: flex;
     }
-
     .loading-spinner {
-      width: 48px;
-      height: 48px;
-      border: 4px solid var(--primary-light);
-      border-top: 4px solid var(--primary);
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f0f2f5;
+      border-top: 4px solid #409eff;
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
-
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
 
-    .loading-text {
-      font-size: 16px;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
-
-    /* 模态框样式升级 */
+    /* 批量操作模态框 */
     .modal-backdrop {
       position: fixed;
       top: 0;
@@ -913,76 +436,54 @@
       display: none;
       justify-content: center;
       align-items: center;
-      backdrop-filter: blur(2px);
-      opacity: 0;
-      transition: opacity 0.3s ease;
     }
-
     .modal-backdrop.show {
       display: flex;
-      opacity: 1;
     }
-
     .modal {
-      background-color: var(--bg-white);
-      border-radius: var(--radius-lg);
+      background-color: white;
+      border-radius: 12px;
       width: 90%;
       max-width: 800px;
-      max-height: 85vh;
+      max-height: 80vh;
       overflow-y: auto;
-      box-shadow: var(--shadow-lg);
-      transform: translateY(20px) scale(0.98);
-      transition: transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
-
-    .modal-backdrop.show .modal {
-      transform: translateY(0) scale(1);
-    }
-
     .modal-header {
-      padding: 1rem 1.25rem;
-      border-bottom: 1px solid var(--border);
+      padding: 15px 20px;
+      border-bottom: 1px solid #f0f2f5;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-
     .modal-title {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 600;
-      color: var(--text-primary);
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      color: #303133;
     }
-
     .modal-close {
       background: none;
       border: none;
       font-size: 18px;
       cursor: pointer;
-      color: var(--text-tertiary);
-      width: 36px;
-      height: 36px;
+      color: #909399;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: var(--transition);
     }
-
     .modal-close:hover {
-      background-color: var(--danger-light);
-      color: var(--danger);
+      background-color: #f5f7fa;
+      color: #606266;
     }
-
     .modal-body {
-      padding: 1.25rem;
+      padding: 20px;
     }
-
     .modal-footer {
-      padding: 1rem 1.25rem;
-      border-top: 1px solid var(--border);
+      padding: 15px 20px;
+      border-top: 1px solid #f0f2f5;
       display: flex;
       justify-content: flex-end;
       gap: 10px;
@@ -990,159 +491,89 @@
 
     /* 导入模板和帮助文本 */
     .import-template {
-      margin-top: 1rem;
-      padding: 1rem;
-      background-color: var(--bg-light);
-      border-radius: var(--radius);
+      margin-top: 15px;
+      padding: 10px;
+      background-color: #f5f7fa;
+      border-radius: 8px;
       font-size: 13px;
-      border: 1px solid var(--border);
     }
-
     .import-template-title {
       font-weight: 600;
-      margin-bottom: 8px;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      margin-bottom: 5px;
+      color: #409eff;
     }
-
     .import-fields {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 10px;
       margin: 10px 0;
     }
-
     .import-field {
       padding: 3px 8px;
-      background-color: var(--primary-light);
+      background-color: #ecf5ff;
       border-radius: 4px;
       font-size: 12px;
-      color: var(--primary);
-      font-weight: 500;
+      color: #409eff;
     }
 
-    /* 人员列表样式优化 */
+    /* 人员列表样式 */
     .person-list {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 1rem;
-      margin-top: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
     }
-
     .person-card {
-      background-color: var(--bg-white);
-      border-radius: var(--radius);
-      padding: 1rem;
-      border: 1px solid var(--border);
-      transition: var(--transition);
-      display: flex;
-      flex-direction: column;
+      background-color: #f9fafb;
+      border-radius: 8px;
+      padding: 15px;
+      border: 1px solid #f0f2f5;
+      transition: all 0.2s;
     }
-
     .person-card:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--shadow-lg);
-      border-color: var(--primary-light);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      border-color: #e6f7ff;
     }
-
-    .person-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 1rem;
-    }
-
-    .person-avatar-lg {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background-color: var(--primary-light);
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      font-weight: 600;
-    }
-
     .person-name {
       font-weight: 600;
-      margin-bottom: 4px;
-      font-size: 16px;
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-
-    .person-department {
-      font-size: 12px;
-      color: var(--text-tertiary);
-      background-color: var(--bg-light);
-      padding: 2px 6px;
-      border-radius: 4px;
-      display: inline-block;
-    }
-
     .person-info {
       font-size: 13px;
-      color: var(--text-secondary);
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      color: #606266;
+      margin-bottom: 3px;
     }
-
-    .person-info i {
-      color: var(--text-tertiary);
-      width: 16px;
-      text-align: center;
-    }
-
     .person-actions {
-      margin-top: auto;
+      margin-top: 10px;
       display: flex;
       justify-content: flex-end;
-      gap: 6px;
-      padding-top: 0.75rem;
-      border-top: 1px dashed var(--border);
+      gap: 5px;
     }
 
     /* 导入方式选项卡 */
     .import-tabs {
       display: flex;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 1rem;
-      position: relative;
+      border-bottom: 1px solid #e4e7ed;
+      margin-bottom: 15px;
     }
-
     .import-tab {
-      padding: 10px 1.25rem;
+      padding: 10px 15px;
       cursor: pointer;
       border-bottom: 2px solid transparent;
-      transition: var(--transition);
-      font-weight: 500;
-      position: relative;
-      z-index: 1;
+      transition: all 0.2s;
     }
-
     .import-tab.active {
-      color: var(--primary);
+      border-bottom-color: #409eff;
+      color: #409eff;
+      font-weight: 500;
     }
-
-    .import-tab-indicator {
-      position: absolute;
-      bottom: -1px;
-      left: 0;
-      height: 2px;
-      background-color: var(--primary);
-      border-radius: 2px 2px 0 0;
-      transition: var(--transition);
-    }
-
     .import-tab-content {
       display: none;
-      animation: fadeIn 0.3s ease forwards;
     }
-
     .import-tab-content.active {
       display: block;
     }
@@ -1150,242 +581,64 @@
     /* 粘贴导入文本区域 */
     .paste-area {
       width: 100%;
-      min-height: 180px;
-      padding: 12px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
+      min-height: 150px;
+      padding: 10px;
+      border: 1px solid #e4e7ed;
+      border-radius: 8px;
       font-family: monospace;
       font-size: 13px;
       resize: vertical;
       margin-bottom: 10px;
-      line-height: 1.6;
     }
-
-    .paste-area:focus {
-      border-color: var(--primary);
-      outline: none;
-      box-shadow: 0 0 0 3px var(--primary-light);
-    }
-
     .paste-preview {
-      margin-top: 1rem;
-      max-height: 240px;
+      margin-top: 15px;
+      max-height: 200px;
       overflow-y: auto;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
+      border: 1px solid #e4e7ed;
+      border-radius: 8px;
     }
-
     .paste-preview-header {
-      background-color: var(--bg-light);
+      background-color: #f5f7fa;
       font-weight: 500;
     }
-
     .paste-preview-row {
       display: grid;
       grid-template-columns: 50px 1fr 1fr 1fr 1fr;
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--border);
+      padding: 8px 10px;
+      border-bottom: 1px solid #f0f2f5;
       font-size: 13px;
-      transition: var(--transition);
     }
-
-    .paste-preview-row:hover {
-      background-color: var(--primary-light);
-    }
-
     .paste-preview-row.error {
-      background-color: var(--danger-light);
+      background-color: #fff1f0;
     }
-
     .paste-error {
-      color: var(--danger);
+      color: #f56c6c;
       font-size: 12px;
-      margin-top: 8px;
-      padding: 8px;
-      background-color: var(--danger-light);
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      margin-top: 5px;
     }
 
-    /* 主题切换与个性化设置 */
-    .theme-switch {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-    }
-
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 40px;
-      height: 20px;
-    }
-
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ccc;
-      transition: .3s;
-      border-radius: 20px;
-    }
-
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 16px;
-      width: 16px;
-      left: 2px;
-      bottom: 2px;
-      background-color: white;
-      transition: .3s;
-      border-radius: 50%;
-    }
-
-    input:checked + .slider {
-      background-color: var(--primary);
-    }
-
-    input:checked + .slider:before {
-      transform: translateX(20px);
-    }
-
-    .settings-dropdown {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      width: 240px;
-      background-color: var(--bg-white);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-lg);
-      margin-top: 4px;
-      z-index: 100;
-      overflow: hidden;
-      display: none;
-      animation: fadeIn 0.2s ease forwards;
-    }
-
-    .settings-dropdown.show {
-      display: block;
-    }
-
-    .settings-section {
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .settings-section:last-child {
-      border-bottom: none;
-    }
-
-    .settings-title {
-      font-size: 13px;
-      color: var(--text-tertiary);
-      margin-bottom: 8px;
-      font-weight: 500;
-    }
-
-    .settings-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    .settings-item:last-child {
-      margin-bottom: 0;
-    }
-
-    .settings-label {
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    /* 响应式设计优化 */
-    @media (max-width: 1024px) {
-      .sidebar {
-        width: 220px;
-      }
-      
-      .stats-container {
-        gap: 0.75rem;
-      }
-      
-      .person-list {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      }
-    }
-
+    /* 响应式调整 */
     @media (max-width: 768px) {
-      .sidebar {
-        position: fixed;
-        left: -240px;
-        height: 100vh;
-      }
-      
-      .sidebar.show {
-        left: 0;
-      }
-      
-      .sidebar.collapsed.show {
-        left: 0;
-        width: 64px;
-      }
-      
-      .main-content {
-        width: 100%;
-      }
-      
-      .mobile-header {
-        display: flex !important;
-      }
-      
       .filter-bar {
         flex-direction: column;
-        align-items: stretch;
+        align-items: flex-start;
       }
-      
-      .filter-actions {
-        margin-left: 0;
-        width: 100%;
-        justify-content: flex-end;
-      }
-      
       .input-search {
         width: 100%;
         max-width: none;
       }
-      
-      .form-row {
-        gap: 0.75rem;
+      .main-nav {
+        flex-wrap: wrap;
       }
-      
-      .form-col {
-        flex: 0 0 100%;
-      }
-      
-      .stats-container {
+      .header {
         flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
       }
-      
-      .stat-card {
-        min-width: auto;
+      .header-actions {
+        width: 100%;
+        justify-content: space-between;
       }
-      
       .paste-preview-row {
         grid-template-columns: 40px 1fr;
         grid-template-rows: auto auto auto auto;
@@ -1395,1038 +648,433 @@
           "index age"
           "index assignee";
       }
-      
       .paste-preview-row > div:nth-child(1) { grid-area: index; }
       .paste-preview-row > div:nth-child(2) { grid-area: phone; }
       .paste-preview-row > div:nth-child(3) { grid-area: name; }
       .paste-preview-row > div:nth-child(4) { grid-area: age; }
       .paste-preview-row > div:nth-child(5) { grid-area: assignee; }
-      
-      .header-actions .btn span:not(.fa) {
-        display: none;
-      }
-      
-      .header-actions .btn {
-        min-width: auto;
-        padding: 0 8px;
-        gap: 0;
-      }
-      
-      .user-info span {
-        display: none;
-      }
-      
-      .user-info {
-        padding: 4px;
-      }
-    }
-
-    /* 移动端适配 */
-    .mobile-header {
-      display: none;
-      height: 56px;
-      background-color: var(--bg-white);
-      border-bottom: 1px solid var(--border);
-      align-items: center;
-      padding: 0 1rem;
-    }
-
-    .mobile-menu-btn {
-      background: none;
-      border: none;
-      font-size: 20px;
-      color: var(--text-secondary);
-      cursor: pointer;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: var(--transition);
-    }
-
-    .mobile-menu-btn:hover {
-      background-color: var(--bg-light);
-      color: var(--primary);
-    }
-
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      z-index: 95;
-      display: none;
-    }
-
-    .overlay.show {
-      display: block;
-    }
-
-    /* 自定义滚动条 */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: var(--bg-light);
-      border-radius: 3px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: var(--text-tertiary);
-      border-radius: 3px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: var(--text-secondary);
-    }
-
-    /* 工具提示 */
-    .tooltip {
-      position: relative;
-      display: inline-block;
-    }
-
-    .tooltip .tooltip-text {
-      visibility: hidden;
-      width: 120px;
-      background-color: var(--text-primary);
-      color: #fff;
-      text-align: center;
-      border-radius: var(--radius-sm);
-      padding: 5px;
-      position: absolute;
-      z-index: 1;
-      bottom: 125%;
-      left: 50%;
-      transform: translateX(-50%);
-      opacity: 0;
-      transition: opacity 0.3s;
-      font-size: 12px;
-      font-weight: normal;
-      box-shadow: var(--shadow);
-    }
-
-    .tooltip .tooltip-text::after {
-      content: "";
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      margin-left: -5px;
-      border-width: 5px;
-      border-style: solid;
-      border-color: var(--text-primary) transparent transparent transparent;
-    }
-
-    .tooltip:hover .tooltip-text {
-      visibility: visible;
-      opacity: 1;
-    }
-    
-    /* 自定义数量输入框样式 */
-    .custom-amount-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 10px;
-      padding: 10px;
-      background-color: var(--primary-light);
-      border-radius: var(--radius);
-    }
-    
-    .custom-amount-container.hidden {
-      display: none;
-    }
-    
-    .amount-input-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex: 1;
-    }
-    
-    .amount-input {
-      width: 100px !important;
-      text-align: center;
-    }
-    
-    .amount-info {
-      font-size: 12px;
-      color: var(--text-secondary);
-      flex: 2;
     }
   </style>
 </head>
 <body>
-  <div class="app-container">
-    <!-- 侧边栏导航 -->
-    <div class="sidebar" id="sidebar">
-      <div class="logo" id="sidebarLogo">
-        <div class="logo-icon">📞</div>
-        <span>US号码管家</span>
-      </div>
-      
-      <ul class="sidebar-menu">
-        <li class="sidebar-menu-item">
-          <a href="javascript:showPage('listPage')" class="sidebar-menu-link active" data-page="listPage">
-            <i class="fas fa-list sidebar-menu-icon"></i>
-            <span>号码管理</span>
-          </a>
-        </li>
-        <li class="sidebar-menu-item">
-          <a href="javascript:showPage('personPage')" class="sidebar-menu-link" data-page="personPage">
-            <i class="fas fa-users sidebar-menu-icon"></i>
-            <span>人员管理</span>
-          </a>
-        </li>
-        <li class="sidebar-menu-item">
-          <a href="javascript:showPage('statisticsPage')" class="sidebar-menu-link" data-page="statisticsPage">
-            <i class="fas fa-chart-pie sidebar-menu-icon"></i>
-            <span>统计分析</span>
-          </a>
-        </li>
-        <li class="sidebar-menu-item">
-          <a href="javascript:showPage('settingsPage')" class="sidebar-menu-link" data-page="settingsPage">
-            <i class="fas fa-cog sidebar-menu-icon"></i>
-            <span>系统设置</span>
-          </a>
-        </li>
-      </ul>
-      
-      <div class="sidebar-collapse">
-        <button class="sidebar-collapse-btn" id="sidebarCollapseBtn">
-          <i class="fas fa-angle-left"></i>
-        </button>
+  <div class="container">
+    <!-- 提示框组件 -->
+    <div class="toast" id="toast"></div>
+    
+    <!-- 加载动画 -->
+    <div class="loading" id="loading">
+      <div class="loading-spinner"></div>
+      <div id="loadingText">处理中...</div>
+    </div>
+
+    <!-- 批量导入模态框 -->
+    <div class="modal-backdrop" id="importModal">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title">批量导入号码</div>
+          <button class="modal-close" onclick="closeImportModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <!-- 导入方式选项卡 -->
+          <div class="import-tabs">
+            <div class="import-tab active" onclick="switchImportTab('file')">文件导入</div>
+            <div class="import-tab" onclick="switchImportTab('paste')">粘贴导入</div>
+          </div>
+          
+          <!-- 文件导入内容 -->
+          <div class="import-tab-content active" id="fileImportContent">
+            <div class="form-item">
+              <label class="form-label">选择CSV文件</label>
+              <input type="file" class="input" id="importFile" accept=".csv">
+              <div class="form-hint">支持格式：.csv，最大1000条数据</div>
+            </div>
+            
+            <div class="form-item">
+              <label class="form-label">默认被分配人（可选）</label>
+              <select class="select" id="defaultAssignee">
+                <option value="">不设置默认值</option>
+                <!-- 人员列表将通过JS动态添加 -->
+              </select>
+              <div class="form-hint">如CSV文件中未指定被分配人，将使用此默认值</div>
+            </div>
+            
+            <div class="import-template">
+              <div class="import-template-title">
+                文件导入格式说明
+              </div>
+              <div>支持的字段（顺序必须一致）：</div>
+              <div class="import-fields">
+                <span class="import-field">phoneNumber（必填）</span>
+                <span class="import-field">name（必填）</span>
+                <span class="import-field">age（必填）</span>
+                <span class="import-field">assignee（可选）</span>
+              </div>
+              <div>示例：+1-212-555-1234,张三,30,亚马逊团队</div>
+              <button class="btn btn-sm btn-default" style="margin-top: 10px;" onclick="downloadImportTemplate()">
+                下载模板
+              </button>
+            </div>
+          </div>
+          
+          <!-- 粘贴导入内容 -->
+          <div class="import-tab-content" id="pasteImportContent">
+            <div class="form-item">
+              <label class="form-label">粘贴数据</label>
+              <textarea class="paste-area" id="pasteData" placeholder="请按以下格式粘贴数据，每行一条记录：
+美国号码,姓名,年龄,被分配人（可选）
+例如：
++1-212-555-1234,张三,30,亚马逊团队
++1-310-555-6789,李四,28
++1-773-555-4321,王五,35,Shopify团队"></textarea>
+              <div class="form-hint">每行一条记录，字段用英文逗号分隔，被分配人可省略</div>
+              <button class="btn btn-sm btn-primary" onclick="parsePasteData()">
+                解析数据
+              </button>
+            </div>
+            
+            <!-- 数据预览区域 -->
+            <div id="pastePreviewContainer" style="display: none;">
+              <div class="form-hint" style="margin-bottom: 10px;">数据预览（共 <span id="previewCount">0</span> 条）</div>
+              <div class="paste-preview">
+                <div class="paste-preview-header paste-preview-row">
+                  <div>序号</div>
+                  <div>美国号码</div>
+                  <div>姓名</div>
+                  <div>年龄</div>
+                  <div>被分配人</div>
+                </div>
+                <div id="pastePreviewContent"></div>
+              </div>
+              <div id="pasteErrors" class="paste-error"></div>
+            </div>
+            
+            <div class="form-item" style="margin-top: 20px;">
+              <label class="form-label">统一分配给（可选）</label>
+              <select class="select" id="pasteAssignee">
+                <option value="">不分配</option>
+                <!-- 人员列表将通过JS动态添加 -->
+              </select>
+              <div class="form-hint">选择后将覆盖粘贴数据中的被分配人信息</div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-default" onclick="closeImportModal()">取消</button>
+          <button class="btn btn-primary" onclick="doImport()">开始导入</button>
+        </div>
       </div>
     </div>
 
-    <!-- 移动端遮罩层 -->
-    <div class="overlay" id="overlay"></div>
-
-    <!-- 主内容区域 -->
-    <div class="main-content">
-      <!-- 移动端头部 -->
-      <div class="mobile-header">
-        <button class="mobile-menu-btn" id="mobileMenuBtn">
-          <i class="fas fa-bars"></i>
-        </button>
-        <div class="logo" style="margin-left: 10px;">
-          <div class="logo-icon" style="width: 32px; height: 32px; font-size: 16px;">📞</div>
+    <!-- 批量导出模态框 -->
+    <div class="modal-backdrop" id="exportModal">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title">批量导出号码</div>
+          <button class="modal-close" onclick="closeExportModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-item">
+            <label class="form-label">选择导出字段</label>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 10px;">
+              <label style="display: flex; align-items: center; gap: 5px;">
+                <input type="checkbox" checked id="exportPhone"> 美国号码
+              </label>
+              <label style="display: flex; align-items: center; gap: 5px;">
+                <input type="checkbox" checked id="exportName"> 姓名
+              </label>
+              <label style="display: flex; align-items: center; gap: 5px;">
+                <input type="checkbox" checked id="exportAge"> 年龄
+              </label>
+              <label style="display: flex; align-items: center; gap: 5px;">
+                <input type="checkbox" checked id="exportAssignee"> 被分配人
+              </label>
+              <label style="display: flex; align-items: center; gap: 5px;">
+                <input type="checkbox" checked id="exportImportTime"> 导入时间
+              </label>
+              <label style="display: flex; align-items: center; gap: 5px;">
+                <input type="checkbox" checked id="exportFileName"> 导入文件名
+              </label>
+            </div>
+          </div>
+          
+          <div class="form-item">
+            <label class="form-label">导出范围</label>
+            <select class="select" id="exportRange">
+              <option value="filtered">当前筛选结果</option>
+              <option value="all">全部号码</option>
+              <option value="random50">随机50个未分配号码</option>
+              <option value="random100">随机100个未分配号码</option>
+            </select>
+            <div id="randomExportHint" class="form-hint">选择随机导出时，将从所有未分配号码中随机选择指定数量</div>
+          </div>
+          
+          <div class="form-item">
+            <label class="form-label">导出格式</label>
+            <select class="select" id="exportFormat">
+              <option value="csv">CSV（推荐）</option>
+              <option value="txt">TXT（每行一条记录）</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-default" onclick="closeExportModal()">取消</button>
+          <button class="btn btn-primary" onclick="doExport()">开始导出</button>
         </div>
       </div>
+    </div>
 
+    <!-- 1. 号码列表页 -->
+    <div class="page active" id="listPage">
       <!-- 顶部导航 -->
       <div class="header">
-        <div class="header-actions" style="margin-right: auto;">
-          <button class="btn btn-primary" id="refreshBtn">
-            <i class="fas fa-sync-alt"></i>
-            <span>刷新</span>
-          </button>
+        <div class="logo">
+          <div class="logo-icon">📞</div>
+          US号码管家
         </div>
-        
         <div class="header-actions">
-          <button class="btn btn-success" id="addNumberBtn">
-            <i class="fas fa-plus"></i>
-            <span>新增号码</span>
+          <button class="btn btn-success" onclick="showAddForm()">
+            ➕ 新增号码
           </button>
-          <button class="btn btn-primary" id="importBtn">
-            <i class="fas fa-file-import"></i>
-            <span>导入</span>
+          <button class="btn btn-primary" onclick="openImportModal()">
+            📥 批量导入
           </button>
-          <button class="btn btn-primary" id="exportBtn">
-            <i class="fas fa-file-export"></i>
-            <span>导出</span>
+          <button class="btn btn-primary" onclick="openExportModal()">
+            📤 批量导出
           </button>
-          
-          <div class="theme-switch tooltip">
-            <label class="switch">
-              <input type="checkbox" id="themeToggle">
-              <span class="slider"></span>
-            </label>
-            <span class="tooltip-text">切换主题</span>
-          </div>
-          
-          <div class="user-info tooltip" id="userMenuBtn">
-            <div class="user-avatar">JD</div>
-            <span>管理员</span>
-            <i class="fas fa-chevron-down" style="font-size: 12px;"></i>
-            <span class="tooltip-text">用户菜单</span>
-          </div>
-          
-          <div class="settings-dropdown" id="userMenu">
-            <div class="settings-section">
-              <div class="settings-title">账户</div>
-              <div class="settings-item">
-                <div class="settings-label"><i class="fas fa-user"></i> 个人信息</div>
-              </div>
-              <div class="settings-item">
-                <div class="settings-label"><i class="fas fa-key"></i> 修改密码</div>
-              </div>
-            </div>
-            <div class="settings-section">
-              <div class="settings-item">
-                <div class="settings-label"><i class="fas fa-sign-out-alt"></i> 退出登录</div>
-              </div>
-            </div>
-          </div>
+          <button class="btn btn-default" onclick="refreshList()">
+            🔄 刷新
+          </button>
         </div>
       </div>
 
-      <!-- 内容区域 -->
-      <div class="content-wrapper">
-        <!-- 1. 号码列表页 -->
-        <div class="page active" id="listPage">
-          <!-- 统计卡片 -->
-          <div class="stats-container">
-            <div class="stat-card">
-              <div class="stat-title">
-                <i class="fas fa-phone-alt"></i> 总号码数
-              </div>
-              <div class="stat-value" id="totalCount">0</div>
-              <div class="stat-desc">较昨日 +0</div>
-            </div>
-            
-            <div class="stat-card success">
-              <div class="stat-title">
-                <i class="fas fa-check-circle"></i> 已分配
-              </div>
-              <div class="stat-value" id="usedCount">0</div>
-              <div class="stat-desc">
-                <span class="stat-change positive">+0 今日</span>
-              </div>
-            </div>
-            
-            <div class="stat-card warning">
-              <div class="stat-title">
-                <i class="fas fa-clock"></i> 未分配
-              </div>
-              <div class="stat-value" id="unusedCount">0</div>
-              <div class="stat-desc">
-                占比 <span id="unusedRatio">0%</span>
-              </div>
-            </div>
-            
-            <div class="stat-card danger">
-              <div class="stat-title">
-                <i class="fas fa-ban"></i> 已停用
-              </div>
-              <div class="stat-value" id="disabledCount">0</div>
-              <div class="stat-desc">
-                <span class="stat-change negative">+0 本周</span>
-              </div>
-            </div>
-          </div>
+      <!-- 主导航 -->
+      <div class="main-nav">
+        <button class="btn btn-primary" onclick="showPage('listPage')">
+          📋 号码管理
+        </button>
+        <button class="btn btn-default" onclick="showPage('personPage')">
+          👥 人员管理
+        </button>
+      </div>
 
-          <!-- 筛选区 -->
-          <div class="filter-bar">
-            <select class="select" id="statusFilter" style="width: auto; min-width: 140px;">
-              <option value="">全部状态</option>
-              <option value="used">已分配</option>
-              <option value="unused">未分配</option>
-              <option value="disabled">已停用</option>
-            </select>
+      <!-- 筛选区 -->
+      <div class="card">
+        <div class="filter-bar">
+          <select class="select" id="statusFilter" onchange="filterNumbers()">
+            <option value="">全部状态</option>
+            <option value="used">已使用（有分配人）</option>
+            <option value="unused">未使用（无分配人）</option>
+          </select>
 
-            <select class="select" id="assigneeFilter" style="width: auto; min-width: 160px;">
-              <option value="">全部人员</option>
-              <!-- 人员列表将通过JS动态添加 -->
-            </select>
+          <select class="select" id="assigneeFilter" onchange="filterNumbers()">
+            <option value="">全部人员</option>
+            <!-- 人员列表将通过JS动态添加 -->
+          </select>
 
-            <div style="flex: 1; position: relative;">
-              <input type="text" class="input input-search" id="searchInput" 
-                     placeholder="搜索号码/姓名/被分配人" style="padding-left: 36px;">
-              <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-tertiary);"></i>
-            </div>
+          <input type="text" class="input input-search" id="searchInput" 
+                 placeholder="搜索号码/姓名/被分配人" oninput="filterNumbers()">
+        </div>
+      </div>
 
-            <div class="filter-actions">
-              <div class="saved-filters">
-                <button class="btn btn-sm btn-default saved-filters-btn" id="savedFiltersBtn">
-                  <i class="fas fa-filter"></i>
-                  <span>筛选</span>
-                </button>
-                <div class="filter-dropdown" id="savedFiltersDropdown">
-                  <div class="filter-dropdown-item" data-filter="recent">
-                    <span>最近导入</span>
-                    <i class="fas fa-clock"></i>
-                  </div>
-                  <div class="filter-dropdown-item" data-filter="unassigned">
-                    <span>未分配号码</span>
-                    <i class="fas fa-question-circle"><i class="fas fa-question-circle"></i>
-                  </div>
-                  <div class="filter-dropdown-divider"></div>
-                  <div class="filter-dropdown-item" data-filter="save">
-                    <span>保存当前筛选</span>
-                    <i class="fas fa-save"></i>
-                  </div>
-                </div>
-              </div>
-              
-              <button class="btn btn-sm btn-default" id="resetFilterBtn">
-                <i class="fas fa-redo-alt"></i>
-                <span>重置</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- 号码表格 -->
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">
-                <i class="fas fa-list-alt"></i> 号码列表
-              </div>
-              <div>
-                <span style="color: var(--text-tertiary); font-size: 13px;">
-                  共 <span id="tableCount">0</span> 条记录
-                </span>
-              </div>
-            </div>
-
-            <div class="table-wrapper">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th class="sortable" data-sort="id">序号</th>
-                    <th class="sortable" data-sort="phoneNumber">美国号码</th>
-                    <th class="sortable" data-sort="name">姓名</th>
-                    <th class="sortable" data-sort="age">年龄</th>
-                    <th class="sortable" data-sort="assignee">被分配人</th>
-                    <th class="sortable" data-sort="importTime">导入时间</th>
-                    <th class="sortable" data-sort="fileName">来源文件</th>
-                    <th>操作</th>
-                  </tr>
-                </thead>
-                <tbody id="numberTableBody">
-                  <!-- 表格内容由JS动态生成 -->
-                </tbody>
-              </table>
-            </div>
-          </div>
+      <!-- 号码表格 -->
+      <div class="card">
+        <div class="stats">
+          共 <span id="totalCount">0</span> 条 
+          <span class="stats-used" id="usedCount">已使用 0 条</span>
+          <span class="stats-unused" id="unusedCount">未使用 0 条</span>
         </div>
 
-        <!-- 2. 编辑/新增号码页 -->
-        <div class="page" id="editPage">
-          <div class="card">
-            <div class="card-header">
-              <button class="btn btn-sm btn-default" onclick="returnToList()">
-                <i class="fas fa-arrow-left"></i>
-                <span>返回</span>
-              </button>
-              <div class="card-title" id="editTitle">编辑号码</div>
-            </div>
-
-            <form class="form" id="editForm" onsubmit="saveNumber(event)">
-              <input type="hidden" id="editId"> <!-- 隐藏的ID字段 -->
-              <input type="hidden" id="editStatus" value="active"> <!-- 状态字段 -->
-              <input type="hidden" id="editFileName"> <!-- 导入文件名（仅导入时设置） -->
-
-              <div class="form-row">
-                <div class="form-col">
-                  <div class="form-item">
-                    <label class="form-label">美国号码 <span style="color: var(--danger);">*</span></label>
-                    <input type="text" class="input" id="editPhone" placeholder="+1-XXX-XXX-XXXX" 
-                          pattern="^\+1-\d{3}-\d{3}-\d{4}$" required>
-                    <div class="form-hint">
-                      <i class="fas fa-info-circle"></i> 请输入美国号码，格式：+1-XXX-XXX-XXXX
-                    </div>
-                  </div>
-                </div>
-                <div class="form-col">
-                  <div class="form-item">
-                    <label class="form-label">姓名 <span style="color: var(--danger);">*</span></label>
-                    <input type="text" class="input" id="editName" placeholder="请输入姓名" required>
-                  </div>
-                </div>
-              </div>
-
-              <div class="form-row">
-                <div class="form-col">
-                  <div class="form-item">
-                    <label class="form-label">年龄 <span style="color: var(--danger);">*</span></label>
-                    <input type="number" class="input" id="editAge" placeholder="请输入年龄" min="0" max="150" required>
-                    <div class="form-hint">
-                      <i class="fas fa-info-circle"></i> 请输入有效的年龄（0-150）
-                    </div>
-                  </div>
-                </div>
-                <div class="form-col">
-                  <div class="form-item">
-                    <label class="form-label">状态 <span style="color: var(--danger);">*</span></label>
-                    <select class="select" id="editStatusSelect" required>
-                      <option value="active">正常</option>
-                      <option value="disabled">已停用</option>
-                    </select>
-                    <div class="form-hint">
-                      <i class="fas fa-info-circle"></i> 已停用的号码将不会被分配或导出
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="form-item">
-                <label class="form-label">被分配人</label>
-                <select class="select" id="editAssigneeSelect" style="margin-bottom: 10px;">
-                  <option value="">未分配</option>
-                  <!-- 人员列表将通过JS动态添加 -->
-                </select>
-                <div style="display: flex; gap: 10px;">
-                  <input type="text" class="input" id="editAssigneeText" placeholder="或直接输入新的被分配人">
-                  <button type="button" class="btn btn-sm btn-primary" onclick="addPersonFromEdit()">
-                    <i class="fas fa-plus"></i> 添加
-                  </button>
-                </div>
-                <div class="form-hint">
-                  <i class="fas fa-info-circle"></i> 从已有人员选择或直接输入新人员
-                </div>
-              </div>
-
-              <div class="form-item" id="importFileNameContainer" style="display: none;">
-                <label class="form-label">来源文件</label>
-                <input type="text" class="input" id="editDisplayFileName" disabled>
-                <div class="form-hint">
-                  <i class="fas fa-info-circle"></i> 该字段由系统自动生成，不可修改
-                </div>
-              </div>
-
-              <div class="form-item">
-                <label class="form-label">备注</label>
-                <textarea class="textarea" id="editRemark" placeholder="添加备注信息（可选）"></textarea>
-              </div>
-
-              <div class="form-actions">
-                <button type="button" class="btn btn-default" onclick="returnToList()">
-                  <i class="fas fa-times"></i> 取消
-                </button>
-                <button type="submit" class="btn btn-primary">
-                  <i class="fas fa-save"></i> 保存
-                </button>
-              </div>
-            </form>
-          </div>
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>序号</th>
+                <th>美国号码</th>
+                <th>姓名</th>
+                <th>年龄</th>
+                <th>被分配人</th>
+                <th>导入时间</th>
+                <th>导入文件名</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="numberTableBody">
+              <!-- 表格内容由JS动态生成 -->
+            </tbody>
+          </table>
         </div>
+      </div>
+    </div>
 
-        <!-- 3. 使用记录页 -->
-        <div class="page" id="logPage">
-          <div class="card">
-            <div class="card-header">
-              <button class="btn btn-sm btn-default" onclick="returnToList()">
-                <i class="fas fa-arrow-left"></i>
-                <span>返回</span>
-              </button>
-              <div class="card-title" id="logTitle">号码使用记录</div>
-            </div>
+    <!-- 2. 编辑/新增号码页 -->
+    <div class="page" id="editPage">
+      <div class="header">
+        <button class="btn btn-default" onclick="returnToList()">
+          ← 返回列表
+        </button>
+        <h2 id="editTitle">编辑号码</h2>
+      </div>
 
-            <div id="logPhone" style="margin-bottom: 1.5rem; padding: 1rem; background-color: var(--bg-light); border-radius: var(--radius);"></div>
-            
-            <div class="timeline" id="timelineContainer">
-              <!-- 时间线内容由JS动态生成 -->
-              <div class="timeline-item">
-                <div class="timeline-dot">ℹ️</div>
-                <div class="timeline-content">
-                  <div class="timeline-time">请选择一个号码查看记录</div>
-                  <div class="timeline-title">使用记录将显示在这里</div>
-                  <div class="timeline-detail">包括号码的分配、修改和状态变更历史</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="card">
+        <form class="form" id="editForm" onsubmit="saveNumber(event)">
+          <input type="hidden" id="editId"> <!-- 隐藏的ID字段 -->
+          <input type="hidden" id="editFileName"> <!-- 导入文件名（仅导入时设置） -->
 
-        <!-- 4. 人员管理页 -->
-        <div class="page" id="personPage">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">
-                <i class="fas fa-users"></i> 人员管理
-              </div>
-              <button class="btn btn-success" onclick="showAddPersonForm()">
-                <i class="fas fa-plus"></i>
-                <span>新增人员</span>
-              </button>
-            </div>
-
-            <div class="filter-bar" style="margin-bottom: 1rem;">
-              <div style="flex: 1; position: relative;">
-                <input type="text" class="input input-search" id="personSearchInput" 
-                      placeholder="搜索人员姓名/部门/备注" style="padding-left: 36px;">
-                <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-tertiary);"></i>
-              </div>
-              
-              <select class="select" id="personDeptFilter" style="width: auto; min-width: 140px;">
-                <option value="">全部部门</option>
-                <option value="亚马逊团队">亚马逊团队</option>
-                <option value="Shopify团队">Shopify团队</option>
-                <option value="客服部">客服部</option>
-                <option value="技术部">技术部</option>
-              </select>
-            </div>
-
-            <div id="personListContainer" class="person-list">
-              <!-- 人员列表由JS动态生成 -->
-            </div>
-          </div>
-
-          <!-- 新增/编辑人员表单 -->
-          <div class="card" id="personFormCard" style="display: none;">
-            <div class="card-header">
-              <button class="btn btn-sm btn-default" onclick="hidePersonForm()">
-                <i class="fas fa-arrow-left"></i>
-                <span>返回</span>
-              </button>
-              <div class="card-title" id="personFormTitle">新增人员</div>
-            </div>
-            
-            <form class="form" id="personForm" onsubmit="savePerson(event)">
-              <input type="hidden" id="personId">
-
-              <div class="form-row">
-                <div class="form-col">
-                  <div class="form-item">
-                    <label class="form-label">姓名 <span style="color: var(--danger);">*</span></label>
-                    <input type="text" class="input" id="personName" placeholder="请输入人员姓名" required>
-                  </div>
-                </div>
-                <div class="form-col">
-                  <div class="form-item">
-                    <label class="form-label">部门/团队 <span style="color: var(--danger);">*</span></label>
-                    <input type="text" class="input" id="personPurpose" placeholder="如：亚马逊、客服部" required>
-                  </div>
-                </div>
-              </div>
-
+          <div class="form-row">
+            <div class="form-col">
               <div class="form-item">
-                <label class="form-label">联系方式</label>
-                <input type="text" class="input" id="personContact" placeholder="电话或邮箱（可选）">
+                <label class="form-label">美国号码 <span style="color: #f56c6c;">*</span></label>
+                <input type="text" class="input" id="editPhone" placeholder="+1-XXX-XXX-XXXX" 
+                      pattern="^\+1-\d{3}-\d{3}-\d{4}$" required>
+                <div class="form-hint">请输入美国号码，格式：+1-XXX-XXX-XXXX</div>
               </div>
-
+            </div>
+            <div class="form-col">
               <div class="form-item">
-                <label class="form-label">备注</label>
-                <textarea class="textarea" id="personRemark" placeholder="添加人员相关备注（可选）"></textarea>
-              </div>
-
-              <div class="form-actions">
-                <button type="button" class="btn btn-default" onclick="hidePersonForm()">
-                  <i class="fas fa-times"></i> 取消
-                </button>
-                <button type="submit" class="btn btn-primary">
-                  <i class="fas fa-save"></i> 保存
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        <!-- 5. 统计分析页 -->
-        <div class="page" id="statisticsPage">
-          <div class="stats-container">
-            <div class="stat-card">
-              <div class="stat-title">
-                <i class="fas fa-calendar-alt"></i> 本月新增
-              </div>
-              <div class="stat-value" id="monthlyNew">0</div>
-              <div class="stat-desc">
-                <span class="stat-change positive">+0 环比上月</span>
-              </div>
-            </div>
-            
-            <div class="stat-card success">
-              <div class="stat-title">
-                <i class="fas fa-percentage"></i> 分配率
-              </div>
-              <div class="stat-value" id="assignmentRate">0%</div>
-              <div class="stat-desc">
-                <span class="stat-change positive">+0% 环比上周</span>
-              </div>
-            </div>
-            
-            <div class="stat-card warning">
-              <div class="stat-title">
-                <i class="fas fa-exchange-alt"></i> 周转率
-              </div>
-              <div class="stat-value" id="turnoverRate">0</div>
-              <div class="stat-desc">
-                本月更换分配 0 次
+                <label class="form-label">姓名 <span style="color: #f56c6c;">*</span></label>
+                <input type="text" class="input" id="editName" placeholder="请输入姓名" required>
               </div>
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-col">
-              <div class="card">
-                <div class="card-header">
-                  <div class="card-title">
-                    <i class="fas fa-chart-bar"></i> 部门分配统计
-                  </div>
-                </div>
-                <div style="height: 300px; display: flex; align-items: center; justify-content: center; color: var(--text-tertiary);" id="deptChart">
-                  <div>部门分配统计图表</div>
-                </div>
+              <div class="form-item">
+                <label class="form-label">年龄 <span style="color: #f56c6c;">*</span></label>
+                <input type="number" class="input" id="editAge" placeholder="请输入年龄" min="0" max="150" required>
+                <div class="form-hint">请输入有效的年龄（0-150）</div>
               </div>
             </div>
-            <div class="form-col">
-              <div class="card">
-                <div class="card-header">
-                  <div class="card-title">
-                    <i class="fas fa-chart-line"></i> 导入趋势
-                  </div>
-                </div>
-                <div style="height: 300px; display: flex; align-items: center; justify-content: center; color: var(--text-tertiary);" id="importTrendChart">
-                  <div>导入趋势图表</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">
-                <i class="fas fa-trophy"></i> 部门效率排行
-              </div>
-            </div>
-            <div class="table-wrapper">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>排名</th>
-                    <th>部门</th>
-                    <th>分配数量</th>
-                    <th>使用率</th>
-                    <th>平均使用时长</th>
-                  </tr>
-                </thead>
-                <tbody id="deptRankingBody">
-                  <!-- 部门排行由JS动态生成 -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- 6. 系统设置页 -->
-        <div class="page" id="settingsPage">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">
-                <i class="fas fa-cog"></i> 系统设置
-              </div>
-            </div>
-            
-            <div class="settings-section">
-              <div class="settings-title">界面设置</div>
-              <div class="settings-item">
-                <div class="settings-label"><i class="fas fa-moon"></i> 深色模式</div>
-                <label class="switch">
-                  <input type="checkbox" id="darkModeToggle">
-                  <span class="slider"></span>
-                </label>
-              </div>
-              <div class="settings-item">
-                <div class="settings-label"><i class="fas fa-compress-arrows-alt"></i> 紧凑布局</div>
-                <label class="switch">
-                  <input type="checkbox" id="compactLayoutToggle">
-                  <span class="slider"></span>
-                </label>
-              </div>
-              <div class="settings-item">
-                <div class="settings-label"><i class="fas fa-language"></i> 语言设置</div>
-                <select class="select" style="width: auto;">
-                  <option value="zh-CN">简体中文</option>
-                  <option value="en">English</option>
-                </select>
-              </div>
-            </div>
-            
-            <div class="settings-section">
-              <div class="settings-title">数据设置</div>
-              <div class="settings-item">
-                <div class="settings-label"><i class="fas fa-clock"></i> 自动刷新时间</div>
-                <select class="select" style="width: auto;">
-                  <option value="0">不自动刷新</option>
-                  <option value="30">30秒</option>
-                  <option value="60" selected>1分钟</option>
-                  <option value="300">5分钟</option>
-                </select>
-              </div>
-              <div class="settings-item">
-                <div class="settings-label"><i class="fas fa-history"></i> 日志保留时间</div>
-                <select class="select" style="width: auto;">
-                  <option value="30">30天</option>
-                  <option value="90" selected>90天</option>
-                  <option value="180">180天</option>
-                  <option value="365">1年</option>
-                </select>
-              </div>
-            </div>
-            
-            <div class="settings-section">
-              <div class="settings-title">导入导出设置</div>
-              <div class="settings-item">
-                <div class="settings-label"><i class="fas fa-file-export"></i> 默认导出格式</div>
-                <select class="select" style="width: auto;">
-                  <option value="csv" selected>CSV</option>
-                  <option value="txt">TXT</option>
-                  <option value="xlsx">Excel</option>
-                </select>
-              </div>
-              <div class="settings-item">
-                <div class="settings-label"><i class="fas fa-shield-alt"></i> 导出加密</div>
-                <label class="switch">
-                  <input type="checkbox" id="exportEncryptionToggle">
-                  <span class="slider"></span>
-                </label>
-              </div>
-            </div>
-            
-            <div class="form-actions">
-              <button type="button" class="btn btn-default">
-                <i class="fas fa-undo"></i> 恢复默认
-              </button>
-              <button type="button" class="btn btn-primary">
-                <i class="fas fa-save"></i> 保存设置
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 批量导入模态框 -->
-  <div class="modal-backdrop" id="importModal">
-    <div class="modal">
-      <div class="modal-header">
-        <div class="modal-title">
-          <i class="fas fa-file-import"></i> 批量导入号码
-        </div>
-        <button class="modal-close" onclick="closeImportModal()">×</button>
-      </div>
-      <div class="modal-body">
-        <!-- 导入方式选项卡 -->
-        <div class="import-tabs">
-          <div class="import-tab active" data-tab="file">文件导入</div>
-          <div class="import-tab" data-tab="paste">粘贴导入</div>
-          <div class="import-tab-indicator" id="importTabIndicator"></div>
-        </div>
-        
-        <!-- 文件导入内容 -->
-        <div class="import-tab-content active" id="fileImportContent">
-          <div class="form-item">
-            <label class="form-label">选择CSV文件</label>
-            <input type="file" class="input" id="importFile" accept=".csv">
-            <div class="form-hint">
-              <i class="fas fa-info-circle"></i> 支持格式：.csv，最大1000条数据
-            </div>
-          </div>
-          
-          <div class="form-item">
-            <label class="form-label">默认被分配人（可选）</label>
-            <select class="select" id="defaultAssignee">
-              <option value="">不设置默认值</option>
-              <!-- 人员列表将通过JS动态添加 -->
-            </select>
-            <div class="form-hint">
-              <i class="fas fa-info-circle"></i> 如CSV文件中未指定被分配人，将使用此默认值
-            </div>
-          </div>
-          
-          <div class="form-item">
-            <label class="form-label">导入后状态</label>
-            <select class="select" id="importStatus">
-              <option value="active" selected>正常</option>
-              <option value="disabled">已停用</option>
-            </select>
-          </div>
-          
-          <div class="import-template">
-            <div class="import-template-title">
-              <i class="fas fa-file-alt"></i> 文件导入格式说明
-            </div>
-            <div>支持的字段（顺序必须一致）：</div>
-            <div class="import-fields">
-              <span class="import-field">phoneNumber（必填）</span>
-              <span class="import-field">name（必填）</span>
-              <span class="import-field">age（必填）</span>
-              <span class="import-field">assignee（可选）</span>
-            </div>
-            <div>示例：+1-212-555-1234,张三,30,亚马逊团队</div>
-            <button class="btn btn-sm btn-primary" style="margin-top: 10px;" onclick="downloadImportTemplate()">
-              <i class="fas fa-download"></i> 下载模板
-            </button>
-          </div>
-        </div>
-        
-        <!-- 粘贴导入内容 -->
-        <div class="import-tab-content" id="pasteImportContent">
-          <div class="form-item">
-            <label class="form-label">粘贴数据</label>
-            <textarea class="paste-area" id="pasteData" placeholder="请按以下格式粘贴数据，每行一条记录：
-美国号码,姓名,年龄,被分配人（可选）
-例如：
-+1-212-555-1234,张三,30,亚马逊团队
-+1-310-555-6789,李四,28
-+1-773-555-4321,王五,35,Shopify团队"></textarea>
-            <div class="form-hint">
-              <i class="fas fa-info-circle"></i> 每行一条记录，字段用英文逗号分隔，被分配人可省略
-            </div>
-            <button class="btn btn-sm btn-primary" onclick="parsePasteData()">
-              <i class="fas fa-magic"></i> 解析数据
-            </button>
-          </div>
-          
-          <!-- 数据预览区域 -->
-          <div id="pastePreviewContainer" style="display: none;">
-            <div class="form-hint" style="margin-bottom: 10px;">数据预览（共 <span id="previewCount">0</span> 条）</div>
-            <div class="paste-preview">
-              <div class="paste-preview-header paste-preview-row">
-                <div>序号</div>
-                <div>美国号码</div>
-                <div>姓名</div>
-                <div>年龄</div>
-                <div>被分配人</div>
-              </div>
-              <div id="pastePreviewContent"></div>
-            </div>
-            <div id="pasteErrors" class="paste-error"></div>
-          </div>
-          
-          <div class="form-row" style="margin-top: 1rem;">
             <div class="form-col">
               <div class="form-item">
-                <label class="form-label">统一分配给（可选）</label>
-                <select class="select" id="pasteAssignee">
-                  <option value="">不分配</option>
+                <label class="form-label">被分配人</label>
+                <select class="select" id="editAssigneeSelect">
+                  <option value="">未分配</option>
                   <!-- 人员列表将通过JS动态添加 -->
                 </select>
-                <div class="form-hint">
-                  <i class="fas fa-info-circle"></i> 选择后将覆盖粘贴数据中的被分配人信息
+                <div style="display: flex; gap: 10px; margin-top: 8px;">
+                  <input type="text" class="input" id="editAssigneeText" placeholder="或直接输入">
+                  <button type="button" class="btn btn-sm btn-default" onclick="addPersonFromEdit()">
+                    + 添加
+                  </button>
                 </div>
+                <div class="form-hint">从已有人员选择或直接输入新人员</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-item" id="importFileNameContainer" style="display: none;">
+            <label class="form-label">导入文件名</label>
+            <input type="text" class="input" id="editDisplayFileName" disabled>
+            <div class="form-hint">该字段由系统自动生成，不可修改</div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-default" onclick="returnToList()">
+              取消
+            </button>
+            <button type="submit" class="btn btn-primary">
+              保存
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 3. 使用记录页 -->
+    <div class="page" id="logPage">
+      <div class="header">
+        <button class="btn btn-default" onclick="returnToList()">
+          ← 返回列表
+        </button>
+        <h2 id="logTitle">号码使用记录</h2>
+      </div>
+
+      <div class="card">
+        <div id="logPhone" class="form-hint" style="margin-bottom: 20px; font-size: 14px;"></div>
+        
+        <div class="timeline" id="timelineContainer">
+          <!-- 时间线内容由JS动态生成 -->
+          <div class="timeline-item">
+            <div class="timeline-dot">ℹ️</div>
+            <div class="timeline-content">
+              <div class="timeline-time">请选择一个号码查看记录</div>
+              <div class="timeline-title">使用记录将显示在这里</div>
+              <div class="timeline-detail">包括号码的分配、修改和状态变更历史</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. 人员管理页 -->
+    <div class="page" id="personPage">
+      <div class="header">
+        <button class="btn btn-default" onclick="returnToList()">
+          ← 返回号码管理
+        </button>
+        <h2>人员管理</h2>
+      </div>
+
+      <div class="card">
+        <div class="filter-bar">
+          <input type="text" class="input input-search" id="personSearchInput" 
+                 placeholder="搜索人员姓名/用途" oninput="filterPersons()">
+          <button class="btn btn-success" onclick="showAddPersonForm()">
+            ➕ 新增人员
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">
+          <i class="fa fa-users"></i> 人员列表
+        </div>
+        <div id="personListContainer" class="person-list">
+          <!-- 人员列表由JS动态生成 -->
+        </div>
+      </div>
+
+      <!-- 新增/编辑人员表单 -->
+      <div class="card" id="personFormCard" style="display: none;">
+        <div class="section-title">
+          <i class="fa fa-user"></i> <span id="personFormTitle">新增人员</span>
+        </div>
+        <form class="form" id="personForm" onsubmit="savePerson(event)">
+          <input type="hidden" id="personId">
+
+          <div class="form-row">
+            <div class="form-col">
+              <div class="form-item">
+                <label class="form-label">姓名 <span style="color: #f56c6c;">*</span></label>
+                <input type="text" class="input" id="personName" placeholder="请输入人员姓名" required>
               </div>
             </div>
             <div class="form-col">
               <div class="form-item">
-                <label class="form-label">导入后状态</label>
-                <select class="select" id="pasteImportStatus">
-                  <option value="active" selected>正常</option>
-                  <option value="disabled">已停用</option>
-                </select>
+                <label class="form-label">用途/部门</label>
+                <input type="text" class="input" id="personPurpose" placeholder="如：亚马逊、客服部">
+                <div class="form-hint">用于区分同一姓名的不同用途</div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-default" onclick="closeImportModal()">
-          <i class="fas fa-times"></i> 取消
-        </button>
-        <button class="btn btn-primary" onclick="doImport()">
-          <i class="fas fa-check"></i> 开始导入
-        </button>
+
+          <div class="form-item">
+            <label class="form-label">备注</label>
+            <textarea class="input" style="min-height:80px;" id="personRemark" placeholder="添加人员相关备注（可选）"></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-default" onclick="hidePersonForm()">
+              取消
+            </button>
+            <button type="submit" class="btn btn-primary">
+              保存
+            </button>
+          </div>
+        </form>
       </div>
     </div>
-  </div>
-
-  <!-- 批量导出模态框 -->
-  <div class="modal-backdrop" id="exportModal">
-    <div class="modal">
-      <div class="modal-header">
-        <div class="modal-title">
-          <i class="fas fa-file-export"></i> 批量导出号码
-        </div>
-        <button class="modal-close" onclick="closeExportModal()">×</button>
-      </div>
-      <div class="modal-body">
-        <div class="form-item">
-          <label class="form-label">选择导出字段</label>
-          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 10px;">
-            <label style="display: flex; align-items: center; gap: 5px;">
-              <input type="checkbox" checked id="exportPhone"> 美国号码
-            </label>
-            <label style="display: flex; align-items: center; gap: 5px;">
-              <input type="checkbox" checked id="exportName"> 姓名
-            </label>
-            <label style="display: flex; align-items: center; gap: 5px;">
-              <input type="checkbox" checked id="exportAge"> 年龄
-            </label>
-            <label style="display: flex; align-items: center; gap: 5px;">
-              <input type="checkbox" checked id="exportAssignee"> 被分配人
-            </label>
-            <label style="display: flex; align-items: center; gap: 5px;">
-              <input type="checkbox" checked id="exportImportTime"> 导入时间
-            </label>
-            <label style="display: flex; align-items: center; gap: 5px;">
-              <input type="checkbox" checked id="exportFileName"> 来源文件
-            </label>
-            <label style="display: flex; align-items: center; gap: 5px;">
-              <input type="checkbox" id="exportRemark"> 备注
-            </label>
-          </div>
-        </div>
-        
-        <div class="form-item">
-          <label class="form-label">导出范围</label>
-          <select class="select" id="exportRange">
-            <option value="filtered">当前筛选结果</option>
-            <option value="all">全部号码</option>
-            <option value="random">随机未分配号码</option>
-          </select>
-          
-          <!-- 自定义数量输入区域 -->
-          <div class="custom-amount-container hidden" id="customAmountContainer">
-            <div class="amount-input-group">
-              <span>数量：</span>
-              <input type="number" class="input amount-input" id="randomExportAmount" min="1" value="50">
-            </div>
-            <div class="amount-info">
-              <i class="fas fa-info-circle"></i> 将从所有未分配号码中随机选择指定数量导出
-            </div>
-          </div>
-        </div>
-        
-        <div class="form-item">
-          <label class="form-label">导出格式</label>
-          <select class="select" id="exportFormat">
-            <option value="csv">CSV（推荐）</option>
-            <option value="txt">TXT（每行一条记录）</option>
-            <option value="xlsx">Excel</option>
-          </select>
-        </div>
-        
-        <div class="form-item">
-          <label class="form-label">导出选项</label>
-          <div style="display: flex; align-items: center; gap: 10px; margin-top: 8px;">
-            <label style="display: flex; align-items: center; gap: 5px;">
-              <input type="checkbox" id="exportWithHeader" checked> 包含标题行
-            </label>
-            <label style="display: flex; align-items: center; gap: 5px;">
-              <input type="checkbox" id="exportEncrypt"> 加密导出
-            </label>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-default" onclick="closeExportModal()">
-          <i class="fas fa-times"></i> 取消
-        </button>
-        <button class="btn btn-primary" onclick="doExport()">
-          <i class="fas fa-check"></i> 开始导出
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 提示框组件 -->
-  <div class="toast" id="toast">
-    <i class="fas fa-info-circle"></i>
-    <span id="toastMessage"></span>
-  </div>
-  
-  <!-- 加载动画 -->
-  <div class="loading" id="loading">
-    <div class="loading-spinner"></div>
-    <div class="loading-text" id="loadingText">处理中...</div>
   </div>
 
   <script>
@@ -2435,15 +1083,11 @@
     let logList = [];       // 操作日志
     let personList = [];    // 人员列表
     let parsedPasteData = []; // 解析后的粘贴数据
-    let savedFilters = [];  // 保存的筛选条件
-    let currentSortField = 'id'; // 当前排序字段
-    let currentSortDirection = 'asc'; // 当前排序方向
+    let currentNumberId = null;
+    let currentPersonId = null;
 
     // 初始化页面
     window.onload = function() {
-      // 初始化UI交互组件
-      initUIComponents();
-      
       showLoading("加载数据中...");
       // 从本地存储加载数据
       loadAllData();
@@ -2451,215 +1095,16 @@
       renderNumberList();
       renderPersonList();
       updatePersonSelectors();
-      renderStatistics();
       hideLoading();
     };
-
-    // 初始化UI组件交互
-    function initUIComponents() {
-      // 侧边栏折叠/展开
-      const sidebar = document.getElementById('sidebar');
-      const sidebarCollapseBtn = document.getElementById('sidebarCollapseBtn');
-      const sidebarLogoText = document.querySelector('#sidebarLogo span');
-      const menuTexts = document.querySelectorAll('.sidebar-menu-link span');
-      
-      sidebarCollapseBtn.addEventListener('click', function() {
-        sidebar.classList.toggle('collapsed');
-        const icon = sidebarCollapseBtn.querySelector('i');
-        
-        if (sidebar.classList.contains('collapsed')) {
-          icon.classList.remove('fa-angle-left');
-          icon.classList.add('fa-angle-right');
-          sidebarLogoText.style.display = 'none';
-          menuTexts.forEach(text => text.style.display = 'none');
-        } else {
-          icon.classList.remove('fa-angle-right');
-          icon.classList.add('fa-angle-left');
-          sidebarLogoText.style.display = 'inline';
-          menuTexts.forEach(text => text.style.display = 'inline');
-        }
-      });
-      
-      // 移动端菜单
-      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-      const overlay = document.getElementById('overlay');
-      
-      mobileMenuBtn.addEventListener('click', function() {
-        sidebar.classList.add('show');
-        overlay.classList.add('show');
-      });
-      
-      overlay.addEventListener('click', function() {
-        sidebar.classList.remove('show');
-        overlay.classList.remove('show');
-      });
-      
-      // 菜单点击事件
-      document.querySelectorAll('.sidebar-menu-link').forEach(link => {
-        link.addEventListener('click', function() {
-          document.querySelectorAll('.sidebar-menu-link').forEach(l => {
-            l.classList.remove('active');
-          });
-          this.classList.add('active');
-          
-          // 移动端自动关闭菜单
-          if (window.innerWidth <= 768) {
-            sidebar.classList.remove('show');
-            overlay.classList.remove('show');
-          }
-        });
-      });
-      
-      // 导入选项卡切换
-      const importTabs = document.querySelectorAll('.import-tab');
-      const importTabIndicator = document.getElementById('importTabIndicator');
-      
-      importTabs.forEach(tab => {
-        tab.addEventListener('click', function() {
-          const tabName = this.getAttribute('data-tab');
-          
-          // 切换选项卡激活状态
-          importTabs.forEach(t => t.classList.remove('active'));
-          this.classList.add('active');
-          
-          // 切换内容显示
-          document.querySelectorAll('.import-tab-content').forEach(content => {
-            content.classList.remove('active');
-          });
-          document.getElementById(`${tabName}ImportContent`).classList.add('active');
-          
-          // 移动指示器
-          const tabWidth = this.offsetWidth;
-          const tabLeft = this.offsetLeft;
-          importTabIndicator.style.width = `${tabWidth}px`;
-          importTabIndicator.style.left = `${tabLeft}px`;
-        });
-      });
-      
-      // 初始化选项卡指示器位置
-      setTimeout(() => {
-        const activeTab = document.querySelector('.import-tab.active');
-        const tabWidth = activeTab.offsetWidth;
-        const tabLeft = activeTab.offsetLeft;
-        importTabIndicator.style.width = `${tabWidth}px`;
-        importTabIndicator.style.left = `${tabLeft}px`;
-      }, 100);
-      
-      // 筛选下拉菜单
-      const savedFiltersBtn = document.getElementById('savedFiltersBtn');
-      const savedFiltersDropdown = document.getElementById('savedFiltersDropdown');
-      
-      savedFiltersBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        savedFiltersDropdown.classList.toggle('show');
-      });
-      
-      document.addEventListener('click', function() {
-        savedFiltersDropdown.classList.remove('show');
-      });
-      
-      // 筛选项点击
-      document.querySelectorAll('.filter-dropdown-item').forEach(item => {
-        item.addEventListener('click', function() {
-          const filterType = this.getAttribute('data-filter');
-          
-          if (filterType === 'recent') {
-            // 最近导入筛选
-            filterRecentImported();
-          } else if (filterType === 'unassigned') {
-            // 未分配筛选
-            filterUnassigned();
-          } else if (filterType === 'save') {
-            // 保存当前筛选
-            saveCurrentFilter();
-          }
-          
-          savedFiltersDropdown.classList.remove('show');
-        });
-      });
-      
-      // 重置筛选按钮
-      document.getElementById('resetFilterBtn').addEventListener('click', function() {
-        document.getElementById('statusFilter').value = '';
-        document.getElementById('assigneeFilter').value = '';
-        document.getElementById('searchInput').value = '';
-        filterNumbers();
-      });
-      
-      // 表格排序
-      document.querySelectorAll('.table th.sortable').forEach(header => {
-        header.addEventListener('click', function() {
-          const field = this.getAttribute('data-sort');
-          
-          // 重置所有排序指示
-          document.querySelectorAll('.table th.sortable').forEach(h => {
-            h.classList.remove('sort-asc', 'sort-desc');
-          });
-          
-          // 设置排序方向
-          if (currentSortField === field) {
-            currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
-          } else {
-            currentSortField = field;
-            currentSortDirection = 'asc';
-          }
-          
-          // 添加排序指示
-          this.classList.add(`sort-${currentSortDirection}`);
-          
-          // 重新筛选和排序
-          filterNumbers();
-        });
-      });
-      
-      // 用户菜单
-      const userMenuBtn = document.getElementById('userMenuBtn');
-      const userMenu = document.getElementById('userMenu');
-      
-      userMenuBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        userMenu.classList.toggle('show');
-      });
-      
-      document.addEventListener('click', function() {
-        userMenu.classList.remove('show');
-      });
-      
-      // 快捷按钮绑定
-      document.getElementById('addNumberBtn').addEventListener('click', showAddForm);
-      document.getElementById('importBtn').addEventListener('click', openImportModal);
-      document.getElementById('exportBtn').addEventListener('click', openExportModal);
-      document.getElementById('refreshBtn').addEventListener('click', refreshList);
-      
-      // 主题切换
-      const themeToggle = document.getElementById('themeToggle');
-      themeToggle.addEventListener('change', function() {
-        if (this.checked) {
-          document.body.classList.add('dark-mode');
-          showToast('已切换至深色模式', 'success');
-        } else {
-          document.body.classList.remove('dark-mode');
-          showToast('已切换至浅色模式', 'success');
-        }
-      });
-      
-      // 导出范围选择变化事件 - 显示/隐藏自定义数量输入
-      const exportRange = document.getElementById('exportRange');
-      const customAmountContainer = document.getElementById('customAmountContainer');
-      
-      exportRange.addEventListener('change', function() {
-        if (this.value === 'random') {
-          customAmountContainer.classList.remove('hidden');
-        } else {
-          customAmountContainer.classList.add('hidden');
-        }
-      });
-    }
 
     // 页面切换 - 返回列表页
     function returnToList() {
       showToast("返回列表", "success");
-      showPage('listPage');
+      document.getElementById('listPage').classList.add('active');
+      document.getElementById('editPage').classList.remove('active');
+      document.getElementById('logPage').classList.remove('active');
+      document.getElementById('personPage').classList.remove('active');
     }
 
     // 通用页面切换
@@ -2669,97 +1114,27 @@
       });
       document.getElementById(pageId).classList.add('active');
       
-      // 更新侧边栏选中状态
-      document.querySelectorAll('.sidebar-menu-link').forEach(link => {
-        if (link.getAttribute('data-page') === pageId) {
-          link.classList.add('active');
-        } else {
-          link.classList.remove('active');
-        }
-      });
-      
       // 如果切换到人员页面，重新渲染人员列表
       if (pageId === 'personPage') {
         renderPersonList();
       }
-      
-      // 如果切换到统计页面，重新渲染统计数据
-      if (pageId === 'statisticsPage') {
-        renderStatistics();
-      }
     }
 
-    // 筛选最近导入的数据（近7天）
-    function filterRecentImported() {
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-      
-      document.getElementById('statusFilter').value = '';
-      document.getElementById('assigneeFilter').value = '';
-      document.getElementById('searchInput').value = '';
-      
-      const filtered = numberList.filter(item => {
-        const importDate = new Date(item.importTime);
-        return importDate >= sevenDaysAgo;
+    // 切换导入方式选项卡
+    function switchImportTab(tabName) {
+      // 隐藏所有内容
+      document.querySelectorAll('.import-tab-content').forEach(content => {
+        content.classList.remove('active');
       });
       
-      renderNumberList(filtered);
-      showToast('已筛选最近7天导入的数据', 'info');
-    }
-
-    // 筛选未分配的数据
-    function filterUnassigned() {
-      document.getElementById('statusFilter').value = 'unused';
-      document.getElementById('assigneeFilter').value = '';
-      document.getElementById('searchInput').value = '';
+      // 取消所有选项卡的选中状态
+      document.querySelectorAll('.import-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
       
-      const filtered = numberList.filter(item => !item.assignee && item.status !== 'disabled');
-      renderNumberList(filtered);
-      showToast('已筛选未分配的号码', 'info');
-    }
-
-    // 保存当前筛选条件
-    function saveCurrentFilter() {
-      const statusFilter = document.getElementById('statusFilter').value;
-      const assigneeFilter = document.getElementById('assigneeFilter').value;
-      const searchKeyword = document.getElementById('searchInput').value;
-      
-      // 生成筛选名称
-      let filterName = '';
-      if (statusFilter === 'used') filterName += '已分配';
-      else if (statusFilter === 'unused') filterName += '未分配';
-      else if (statusFilter === 'disabled') filterName += '已停用';
-      
-      if (assigneeFilter) {
-        filterName += (filterName ? ' - ' : '') + assigneeFilter;
-      }
-      
-      if (searchKeyword) {
-        filterName += (filterName ? ' - ' : '') + '搜索: ' + searchKeyword.substring(0, 10);
-      }
-      
-      if (!filterName) {
-        filterName = '全部数据';
-      }
-      
-      // 提示用户输入筛选名称
-      const customName = prompt('请输入筛选条件名称:', filterName);
-      if (!customName) return;
-      
-      // 保存筛选条件
-      const newFilter = {
-        id: Date.now(),
-        name: customName,
-        status: statusFilter,
-        assignee: assigneeFilter,
-        keyword: searchKeyword
-      };
-      
-      savedFilters.push(newFilter);
-      showToast(`已保存筛选条件: ${customName}`, 'success');
-      
-      // 这里可以将savedFilters保存到localStorage
-      localStorage.setItem('savedFilters', JSON.stringify(savedFilters));
+      // 激活选中的选项卡和内容
+      document.getElementById(`${tabName}ImportContent`).classList.add('active');
+      document.querySelector(`.import-tab[onclick="switchImportTab('${tabName}')"]`).classList.add('active');
     }
 
     // 解析粘贴的数据
@@ -2846,7 +1221,7 @@
       // 显示错误信息
       const errorContainer = document.getElementById('pasteErrors');
       if (errors.length > 0) {
-        errorContainer.innerHTML = `<i class="fas fa-exclamation-circle"></i> 发现 ${errors.length} 个错误：${errors.join('；')}`;
+        errorContainer.textContent = `发现 ${errors.length} 个错误：${errors.join('；')}`;
       } else {
         errorContainer.textContent = '';
       }
@@ -2858,7 +1233,6 @@
       const savedNumbers = localStorage.getItem('usNumbers');
       const savedLogs = localStorage.getItem('usLogs');
       const savedPersons = localStorage.getItem('usPersons');
-      const savedFiltersData = localStorage.getItem('savedFilters');
 
       // 加载号码数据
       if (savedNumbers) {
@@ -2873,9 +1247,7 @@
             age: 30,
             assignee: "亚马逊团队", 
             importTime: "2024-09-20 15:30",
-            fileName: "initial_data.csv",
-            status: "active",
-            remark: "主要用于北美市场"
+            fileName: "initial_data.csv"
           },
           { 
             id: 2, 
@@ -2884,9 +1256,7 @@
             age: 28,
             assignee: "", 
             importTime: "2024-09-21 10:15",
-            fileName: "initial_data.csv",
-            status: "active",
-            remark: ""
+            fileName: "initial_data.csv"
           },
           { 
             id: 3, 
@@ -2895,9 +1265,7 @@
             age: 35,
             assignee: "Shopify团队", 
             importTime: "2024-09-21 14:00",
-            fileName: "october_batch.csv",
-            status: "active",
-            remark: "备用号码"
+            fileName: "october_batch.csv"
           },
           { 
             id: 4, 
@@ -2906,31 +1274,7 @@
             age: 25,
             assignee: "", 
             importTime: "2024-09-22 09:45",
-            fileName: "october_batch.csv",
-            status: "disabled",
-            remark: "已停用"
-          },
-          { 
-            id: 5, 
-            phoneNumber: "+1-202-555-5678", 
-            name: "钱七",
-            age: 40,
-            assignee: "", 
-            importTime: "2024-09-22 11:30",
-            fileName: "october_batch.csv",
-            status: "active",
-            remark: ""
-          },
-          { 
-            id: 6, 
-            phoneNumber: "+1-323-555-4321", 
-            name: "孙八",
-            age: 32,
-            assignee: "", 
-            importTime: "2024-09-22 14:20",
-            fileName: "october_batch.csv",
-            status: "active",
-            remark: ""
+            fileName: "october_batch.csv"
           }
         ];
         saveNumbersToStorage();
@@ -2941,12 +1285,1120 @@
         logList = JSON.parse(savedLogs);
       } else {
         logList = [
-          { id: 1, numberId: 1, action: "分配", content: "分配给 亚马逊团队", time: "2024-09-20 15:30", type: "used", operator: "管理员" },
-          { id: 2, numberId: 3, action: "分配", content: "分配给 Shopify团队", time: "2024-09-21 14:00", type: "used", operator: "管理员" },
-          { id: 3, numberId: 4, action: "停用", content: "手动标记为已停用", time: "2024-09-22 10:30", type: "deleted", operator: "管理员" }
+          { id: 1, numberId: 1, action: "分配", content: "分配给 亚马逊团队", time: "2024-09-20 15:30", type: "used" },
+          { id: 2, numberId: 3, action: "分配", content: "分配给 Shopify团队", time: "2024-09-21 14:00", type: "used" }
         ];
         saveLogsToStorage();
       }
 
       // 加载人员数据
       if (savedPersons) {
+        personList = JSON.parse(savedPersons);
+      } else {
+        personList = [
+          { id: 1, name: "亚马逊团队", purpose: "电商平台", remark: "负责亚马逊相关业务", displayName: "亚马逊团队" },
+          { id: 2, name: "Shopify团队", purpose: "电商平台", remark: "负责Shopify相关业务", displayName: "Shopify团队" },
+          { id: 3, name: "客服部", purpose: "客户服务", remark: "负责客户咨询", displayName: "客服部" }
+        ];
+        savePersonsToStorage();
+      }
+    }
+
+    // 保存数据到本地存储
+    function saveNumbersToStorage() {
+      localStorage.setItem('usNumbers', JSON.stringify(numberList));
+    }
+    function saveLogsToStorage() {
+      localStorage.setItem('usLogs', JSON.stringify(logList));
+    }
+    function savePersonsToStorage() {
+      localStorage.setItem('usPersons', JSON.stringify(personList));
+      // 更新所有人员选择器
+      updatePersonSelectors();
+    }
+
+    // 更新所有人员选择器
+    function updatePersonSelectors() {
+      // 更新分配人筛选器
+      const assigneeFilter = document.getElementById('assigneeFilter');
+      assigneeFilter.innerHTML = '<option value="">全部人员</option>';
+      
+      // 更新编辑页的人员选择器
+      const editAssigneeSelect = document.getElementById('editAssigneeSelect');
+      editAssigneeSelect.innerHTML = '<option value="">未分配</option>';
+      
+      // 更新导入模态框的默认分配人选择器
+      const defaultAssignee = document.getElementById('defaultAssignee');
+      defaultAssignee.innerHTML = '<option value="">不设置默认值</option>';
+      
+      // 更新粘贴导入的分配人选择器
+      const pasteAssignee = document.getElementById('pasteAssignee');
+      pasteAssignee.innerHTML = '<option value="">不分配</option>';
+      
+      // 添加人员选项
+      personList.forEach(person => {
+        // 筛选器选项
+        const filterOption = document.createElement('option');
+        filterOption.value = person.displayName;
+        filterOption.textContent = person.displayName;
+        assigneeFilter.appendChild(filterOption);
+        
+        // 编辑页选项
+        const editOption = document.createElement('option');
+        editOption.value = person.displayName;
+        editOption.textContent = person.displayName;
+        editAssigneeSelect.appendChild(editOption);
+        
+        // 导入模态框选项
+        const importOption = document.createElement('option');
+        importOption.value = person.displayName;
+        importOption.textContent = person.displayName;
+        defaultAssignee.appendChild(importOption);
+        
+        // 粘贴导入选项
+        const pasteOption = document.createElement('option');
+        pasteOption.value = person.displayName;
+        pasteOption.textContent = person.displayName;
+        pasteAssignee.appendChild(pasteOption);
+      });
+    }
+
+    // 渲染号码列表
+    function renderNumberList(filteredData = null) {
+      const data = filteredData || numberList;
+      const tableBody = document.getElementById('numberTableBody');
+      tableBody.innerHTML = '';
+
+      if (data.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="8" style="padding: 30px;">暂无号码数据，请点击"新增号码"或"批量导入"添加</td>
+          </tr>
+        `;
+      } else {
+        data.forEach((item, index) => {
+          const tr = document.createElement('tr');
+          
+          tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td class="phone-number">${item.phoneNumber}</td>
+            <td>${item.name}</td>
+            <td>${item.age}</td>
+            <td>
+              ${item.assignee 
+                ? `<span class="status-used">${item.assignee}</span>` 
+                : `<span class="status-unused">未分配</span>`
+              }
+            </td>
+            <td>${item.importTime}</td>
+            <td>${item.fileName || '-'}</td>
+            <td>
+              <button class="oper-btn" onclick="editNumber(${item.id})">编辑</button>
+              <button class="oper-btn" onclick="viewLog(${item.id})">记录</button>
+              <button class="oper-btn oper-btn-danger" onclick="deleteNumber(${item.id})">删除</button>
+            </td>
+          `;
+          
+          tableBody.appendChild(tr);
+        });
+      }
+
+      // 更新统计信息
+      updateStats(data);
+    }
+
+    // 更新统计信息
+    function updateStats(data) {
+      const total = data.length;
+      const used = data.filter(item => item.assignee).length;
+      const unused = total - used;
+
+      document.getElementById('totalCount').textContent = total;
+      document.getElementById('usedCount').textContent = `已使用 ${used} 条`;
+      document.getElementById('unusedCount').textContent = `未使用 ${unused} 条`;
+    }
+
+    // 筛选号码
+    function filterNumbers() {
+      const statusFilter = document.getElementById('statusFilter').value;
+      const assigneeFilter = document.getElementById('assigneeFilter').value;
+      const searchKeyword = document.getElementById('searchInput').value.toLowerCase();
+
+      const filtered = numberList.filter(item => {
+        // 状态筛选
+        if (statusFilter === 'used' && !item.assignee) return false;
+        if (statusFilter === 'unused' && item.assignee) return false;
+        
+        // 人员筛选
+        if (assigneeFilter && item.assignee !== assigneeFilter) return false;
+        
+        // 搜索筛选
+        if (searchKeyword && !(
+          item.phoneNumber.toLowerCase().includes(searchKeyword) || 
+          item.name.toLowerCase().includes(searchKeyword) ||
+          (item.assignee && item.assignee.toLowerCase().includes(searchKeyword))
+        )) return false;
+        
+        return true;
+      });
+
+      renderNumberList(filtered);
+    }
+
+    // 显示新增号码表单
+    function showAddForm() {
+      document.getElementById('editTitle').textContent = '新增号码';
+      document.getElementById('editForm').reset();
+      document.getElementById('editId').value = '';
+      document.getElementById('editAssigneeText').value = '';
+      document.getElementById('editFileName').value = '';
+      document.getElementById('importFileNameContainer').style.display = 'none';
+      showPage('editPage');
+    }
+
+    // 编辑号码
+    function editNumber(id) {
+      const item = numberList.find(item => item.id === id);
+      if (item) {
+        document.getElementById('editTitle').textContent = '编辑号码';
+        document.getElementById('editId').value = item.id;
+        document.getElementById('editPhone').value = item.phoneNumber;
+        document.getElementById('editName').value = item.name;
+        document.getElementById('editAge').value = item.age;
+        document.getElementById('editAssigneeSelect').value = item.assignee || '';
+        document.getElementById('editAssigneeText').value = '';
+        document.getElementById('editFileName').value = item.fileName || '';
+        document.getElementById('editDisplayFileName').value = item.fileName || '';
+        
+        // 显示导入文件名（如果存在）
+        if (item.fileName) {
+          document.getElementById('importFileNameContainer').style.display = 'block';
+        } else {
+          document.getElementById('importFileNameContainer').style.display = 'none';
+        }
+        
+        showPage('editPage');
+      }
+    }
+
+    // 从编辑页添加新人员
+    function addPersonFromEdit() {
+      const assigneeText = document.getElementById('editAssigneeText').value.trim();
+      if (!assigneeText) {
+        showToast("请输入人员信息", "error");
+        return;
+      }
+      
+      // 尝试解析姓名和用途（格式：姓名（用途））
+      let name, purpose;
+      const match = assigneeText.match(/^(.*?)(?:\((.*)\))?$/);
+      if (match) {
+        name = match[1].trim();
+        purpose = match[2] ? match[2].trim() : '';
+      } else {
+        name = assigneeText;
+        purpose = '';
+      }
+      
+      if (!name) {
+        showToast("请输入人员姓名", "error");
+        return;
+      }
+      
+      // 创建新人员
+      const newId = personList.length > 0 
+        ? Math.max(...personList.map(p => p.id)) + 1 
+        : 1;
+      
+      const newPerson = {
+        id: newId,
+        name,
+        purpose,
+        remark: '',
+        displayName: assigneeText
+      };
+      
+      personList.push(newPerson);
+      savePersonsToStorage();
+      
+      // 选中新添加的人员
+      document.getElementById('editAssigneeSelect').value = assigneeText;
+      document.getElementById('editAssigneeText').value = '';
+      
+      showToast(`已添加新人员：${assigneeText}`, "success");
+    }
+
+    // 保存号码
+    function saveNumber(event) {
+      event.preventDefault();
+      
+      const id = document.getElementById('editId').value;
+      const phoneNumber = document.getElementById('editPhone').value;
+      const name = document.getElementById('editName').value.trim();
+      const age = parseInt(document.getElementById('editAge').value);
+      const assigneeSelect = document.getElementById('editAssigneeSelect').value;
+      const assigneeText = document.getElementById('editAssigneeText').value.trim();
+      const assignee = assigneeText || assigneeSelect;
+      const fileName = document.getElementById('editFileName').value;
+      
+      // 验证必填字段
+      if (!name) {
+        showToast("请输入姓名", "error");
+        return;
+      }
+      
+      if (isNaN(age) || age < 0 || age > 150) {
+        showToast("请输入有效的年龄（0-150）", "error");
+        return;
+      }
+      
+      // 验证号码格式
+      const phonePattern = /^\+1-\d{3}-\d{3}-\d{4}$/;
+      if (!phonePattern.test(phoneNumber)) {
+        showToast("请输入正确的美国号码格式：+1-XXX-XXX-XXXX", "error");
+        return;
+      }
+      
+      // 生成当前时间
+      const now = new Date();
+      const timeStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+      
+      showLoading("保存中...");
+      
+      setTimeout(() => { // 模拟网络延迟
+        if (id) {
+          // 更新现有号码
+          const index = numberList.findIndex(item => item.id === parseInt(id));
+          if (index !== -1) {
+            // 记录状态变更
+            const oldAssignee = numberList[index].assignee;
+            const oldName = numberList[index].name;
+            const oldAge = numberList[index].age;
+            const oldPhone = numberList[index].phoneNumber;
+            
+            numberList[index] = {
+              ...numberList[index],
+              phoneNumber,
+              name,
+              age,
+              assignee,
+              fileName, // 保留导入文件名不变
+              importTime: numberList[index].importTime // 保留原始导入时间
+            };
+            
+            // 生成日志内容
+            let logContent = [];
+            if (oldPhone !== phoneNumber) logContent.push(`号码从 "${oldPhone}" 变更为 "${phoneNumber}"`);
+            if (oldName !== name) logContent.push(`姓名从 "${oldName}" 变更为 "${name}"`);
+            if (oldAge !== age) logContent.push(`年龄从 "${oldAge}" 变更为 "${age}"`);
+            if (oldAssignee !== assignee) logContent.push(`被分配人从 "${oldAssignee || '未分配'}" 变更为 "${assignee || '未分配'}"`);
+            
+            // 添加日志记录
+            addLog(parseInt(id), '更新', logContent.join('；'), assignee ? 'used' : 'unused');
+            
+            showToast('号码更新成功', "success");
+          }
+        } else {
+          // 检查号码是否已存在
+          const exists = numberList.some(item => item.phoneNumber === phoneNumber);
+          if (exists) {
+            hideLoading();
+            showToast("该号码已存在", "error");
+            return;
+          }
+          
+          // 新增号码（手动新增的没有导入文件名）
+          const newId = numberList.length > 0 
+            ? Math.max(...numberList.map(item => item.id)) + 1 
+            : 1;
+            
+          numberList.push({
+            id: newId,
+            phoneNumber,
+            name,
+            age,
+            assignee,
+            importTime: timeStr,
+            fileName: '' // 手动新增的无导入文件名
+          });
+          
+          // 添加日志记录
+          let logAction = assignee ? '分配' : '新增';
+          let logContent = assignee ? `分配给 "${assignee}"` : '新增未分配号码';
+          logContent += `（姓名：${name}，年龄：${age}）`;
+          
+          addLog(newId, logAction, logContent, assignee ? 'used' : 'unused');
+          
+          showToast('号码新增成功', "success");
+        }
+        
+        // 保存数据并返回列表页
+        saveNumbersToStorage();
+        renderNumberList();
+        returnToList();
+        hideLoading();
+      }, 500);
+    }
+
+    // 添加日志记录
+    function addLog(numberId, action, content, type) {
+      const now = new Date();
+      const timeStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+      
+      const newLog = {
+        id: logList.length > 0 ? Math.max(...logList.map(log => log.id)) + 1 : 1,
+        numberId,
+        action,
+        content,
+        time: timeStr,
+        type
+      };
+      
+      logList.push(newLog);
+      saveLogsToStorage();
+    }
+
+    // 查看使用记录
+    function viewLog(numberId) {
+      currentNumberId = numberId;
+      const number = numberList.find(item => item.id === numberId);
+      
+      if (number) {
+        document.getElementById('logTitle').textContent = `号码使用记录 - ${number.phoneNumber}`;
+        document.getElementById('logPhone').textContent = 
+          `号码：${number.phoneNumber} | 姓名：${number.name} | 年龄：${number.age} | 状态：${number.assignee ? '已使用' : '未使用'} | 被分配人：${number.assignee || '无'}`;
+        
+        // 筛选该号码的日志
+        const numberLogs = logList.filter(log => log.numberId === numberId)
+                                 .sort((a, b) => new Date(b.time) - new Date(a.time));
+        
+        const timelineContainer = document.getElementById('timelineContainer');
+        timelineContainer.innerHTML = '';
+        
+        if (numberLogs.length === 0) {
+          timelineContainer.innerHTML = `
+            <div class="timeline-item">
+              <div class="timeline-dot">ℹ️</div>
+              <div class="timeline-content">
+                <div class="timeline-time">暂无记录</div>
+                <div class="timeline-title">该号码暂无使用记录</div>
+              </div>
+            </div>
+          `;
+        } else {
+          numberLogs.forEach(log => {
+            const item = document.createElement('div');
+            item.className = 'timeline-item';
+            
+            item.innerHTML = `
+              <div class="timeline-dot ${log.type}">
+                ${log.type === 'used' ? '✓' : '○'}
+              </div>
+              <div class="timeline-content">
+                <div class="timeline-time">${log.time}</div>
+                <div class="timeline-title">${log.action}操作</div>
+                <div class="timeline-detail">${log.content}</div>
+              </div>
+            `;
+            
+            timelineContainer.appendChild(item);
+          });
+        }
+        
+        showPage('logPage');
+      }
+    }
+
+    // 删除号码
+    function deleteNumber(id) {
+      const number = numberList.find(item => item.id === id);
+      if (!number) return;
+      
+      if (confirm(`确定要删除号码 ${number.phoneNumber}（${number.name}，${number.age}岁）吗？相关记录会被保留。`)) {
+        showLoading("删除中...");
+        
+        setTimeout(() => { // 模拟网络延迟
+          const index = numberList.findIndex(item => item.id === id);
+          if (index !== -1) {
+            numberList.splice(index, 1);
+            saveNumbersToStorage();
+            
+            // 添加删除日志
+            addLog(id, '删除', `删除号码 ${number.phoneNumber}（${number.name}，${number.age}岁）`, 'unused');
+            
+            renderNumberList();
+            showToast('号码已删除', "success");
+          }
+          hideLoading();
+        }, 500);
+      }
+    }
+
+    // 刷新列表
+    function refreshList() {
+      showLoading("刷新中...");
+      
+      setTimeout(() => { // 模拟网络请求
+        loadAllData();
+        renderNumberList();
+        renderPersonList();
+        showToast('数据已刷新', "success");
+        hideLoading();
+      }, 800);
+    }
+
+    // 批量导入相关函数
+    function openImportModal() {
+      document.getElementById('importFile').value = '';
+      document.getElementById('defaultAssignee').value = '';
+      document.getElementById('pasteData').value = '';
+      document.getElementById('pastePreviewContainer').style.display = 'none';
+      document.getElementById('pasteAssignee').value = '';
+      parsedPasteData = [];
+      document.getElementById('importModal').classList.add('show');
+    }
+
+    function closeImportModal() {
+      document.getElementById('importModal').classList.remove('show');
+    }
+
+    function downloadImportTemplate() {
+      const csvContent = "phoneNumber,name,age,assignee\n" +
+                        "+1-212-555-1234,张三,30,亚马逊团队\n" +
+                        "+1-310-555-6789,李四,28,Shopify团队";
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'us-number-import-template.csv');
+      link.style.visibility = 'hidden';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      showToast('模板下载成功', "success");
+    }
+
+    function doImport() {
+      // 判断当前激活的导入方式
+      const isFileImport = document.getElementById('fileImportContent').classList.contains('active');
+      
+      if (isFileImport) {
+        // 文件导入逻辑
+        const fileInput = document.getElementById('importFile');
+        const defaultAssignee = document.getElementById('defaultAssignee').value;
+        
+        if (!fileInput.files || fileInput.files.length === 0) {
+          showToast("请选择要导入的CSV文件", "error");
+          return;
+        }
+        
+        const file = fileInput.files[0];
+        if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
+          showToast("请选择CSV格式的文件", "error");
+          return;
+        }
+        
+        showLoading("导入中...");
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const content = e.target.result;
+            const lines = content.split('\n');
+            const importedNumbers = [];
+            let successCount = 0;
+            let duplicateCount = 0;
+            let errorCount = 0;
+            
+            // 生成当前时间
+            const now = new Date();
+            const timeStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+            
+            // 导入文件名（仅保留文件名，不含路径）
+            const fileName = file.name;
+            
+            // 跳过标题行，从第一行数据开始处理
+            for (let i = 0; i < lines.length; i++) {
+              const line = lines[i].trim();
+              if (!line) continue; // 跳过空行
+              
+              // 分割CSV字段
+              const fields = line.split(',');
+              if (fields.length < 3) { // 至少需要phoneNumber, name, age三个字段
+                errorCount++;
+                continue;
+              }
+              
+              const phoneNumber = fields[0].trim();
+              const name = fields[1].trim();
+              const age = parseInt(fields[2].trim());
+              let assignee = fields.length > 3 ? fields[3].trim() : '';
+              
+              // 应用默认被分配人
+              if (!assignee && defaultAssignee) {
+                assignee = defaultAssignee;
+              }
+              
+              // 验证字段
+              const phonePattern = /^\+1-\d{3}-\d{3}-\d{4}$/;
+              if (!phonePattern.test(phoneNumber)) {
+                errorCount++;
+                continue;
+              }
+              
+              if (!name) {
+                errorCount++;
+                continue;
+              }
+              
+              if (isNaN(age) || age < 0 || age > 150) {
+                errorCount++;
+                continue;
+              }
+              
+              // 检查是否已存在
+              const exists = numberList.some(item => item.phoneNumber === phoneNumber);
+              if (exists) {
+                duplicateCount++;
+                continue;
+              }
+              
+              // 添加到导入列表
+              importedNumbers.push({
+                phoneNumber,
+                name,
+                age,
+                assignee,
+                importTime: timeStr,
+                fileName: fileName
+              });
+              
+              successCount++;
+            }
+            
+            // 保存导入的号码
+            if (importedNumbers.length > 0) {
+              const newId = numberList.length > 0 
+                ? Math.max(...numberList.map(item => item.id)) 
+                : 0;
+              
+              importedNumbers.forEach((num, index) => {
+                numberList.push({
+                  ...num,
+                  id: newId + index + 1
+                });
+                
+                // 添加日志
+                if (num.assignee) {
+                  addLog(newId + index + 1, '导入并分配', 
+                        `从文件 "${fileName}" 导入，分配给 "${num.assignee}"（姓名：${num.name}，年龄：${num.age}）`, 'used');
+                } else {
+                  addLog(newId + index + 1, '导入', 
+                        `从文件 "${fileName}" 导入（姓名：${num.name}，年龄：${num.age}）`, 'unused');
+                }
+              });
+              
+              saveNumbersToStorage();
+              renderNumberList();
+            }
+            
+            // 显示导入结果
+            showToast(`导入完成：成功${successCount}条，重复${duplicateCount}条，错误${errorCount}条`, "success");
+            closeImportModal();
+          } catch (error) {
+            showToast(`导入失败：${error.message}`, "error");
+          } finally {
+            hideLoading();
+          }
+        };
+        
+        reader.readAsText(file);
+      } else {
+        // 粘贴导入逻辑
+        if (parsedPasteData.length === 0) {
+          showToast("请先粘贴数据并解析", "error");
+          return;
+        }
+        
+        // 检查是否有有效数据
+        const validData = parsedPasteData.filter(item => item.isValid);
+        if (validData.length === 0) {
+          showToast("没有可导入的有效数据，请检查并修正错误", "error");
+          return;
+        }
+        
+        // 获取统一分配人设置
+        const pasteAssignee = document.getElementById('pasteAssignee').value;
+        
+        showLoading("导入中...");
+        
+        setTimeout(() => {
+          try {
+            const importedNumbers = [];
+            let successCount = 0;
+            let duplicateCount = 0;
+            
+            // 生成当前时间
+            const now = new Date();
+            const timeStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+            
+            // 处理每条数据
+            validData.forEach(item => {
+              // 检查是否已存在
+              const exists = numberList.some(num => num.phoneNumber === item.phoneNumber);
+              if (exists) {
+                duplicateCount++;
+                return;
+              }
+              
+              // 确定被分配人（如果设置了统一分配人则覆盖）
+              const assignee = pasteAssignee || item.assignee;
+              
+              importedNumbers.push({
+                phoneNumber: item.phoneNumber,
+                name: item.name,
+                age: item.age,
+                assignee,
+                importTime: timeStr,
+                fileName: '粘贴导入' // 标记为粘贴导入
+              });
+              
+              successCount++;
+            });
+            
+            // 保存导入的号码
+            if (importedNumbers.length > 0) {
+              const newId = numberList.length > 0 
+                ? Math.max(...numberList.map(item => item.id)) 
+                : 0;
+              
+              importedNumbers.forEach((num, index) => {
+                numberList.push({
+                  ...num,
+                  id: newId + index + 1
+                });
+                
+                // 添加日志
+                if (num.assignee) {
+                  addLog(newId + index + 1, '导入并分配', 
+                        `粘贴导入，分配给 "${num.assignee}"（姓名：${num.name}，年龄：${num.age}）`, 'used');
+                } else {
+                  addLog(newId + index + 1, '导入', 
+                        `粘贴导入（姓名：${num.name}，年龄：${num.age}）`, 'unused');
+                }
+              });
+              
+              saveNumbersToStorage();
+              renderNumberList();
+            }
+            
+            // 显示导入结果
+            showToast(`导入完成：成功${successCount}条，重复${duplicateCount}条`, "success");
+            closeImportModal();
+          } catch (error) {
+            showToast(`导入失败：${error.message}`, "error");
+          } finally {
+            hideLoading();
+          }
+        }, 800);
+      }
+    }
+
+    // 批量导出相关函数
+    function openExportModal() {
+      document.getElementById('exportModal').classList.add('show');
+    }
+
+    function closeExportModal() {
+      document.getElementById('exportModal').classList.remove('show');
+    }
+
+    // 获取随机的未分配号码
+    function getRandomUnassignedNumbers(count) {
+      // 筛选所有未分配的号码
+      const unassignedNumbers = numberList.filter(num => !num.assignee);
+      
+      // 如果未分配号码不足，返回全部
+      if (unassignedNumbers.length <= count) {
+        return unassignedNumbers;
+      }
+      
+      // 随机排序并取前count个
+      const shuffled = [...unassignedNumbers].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, count);
+    }
+
+    function doExport() {
+      // 获取导出选项
+      const exportPhone = document.getElementById('exportPhone').checked;
+      const exportName = document.getElementById('exportName').checked;
+      const exportAge = document.getElementById('exportAge').checked;
+      const exportAssignee = document.getElementById('exportAssignee').checked;
+      const exportImportTime = document.getElementById('exportImportTime').checked;
+      const exportFileName = document.getElementById('exportFileName').checked;
+      const exportRange = document.getElementById('exportRange').value;
+      const exportFormat = document.getElementById('exportFormat').value;
+      
+      // 检查是否至少选择了一个字段
+      if (!exportPhone && !exportName && !exportAge && !exportAssignee && !exportImportTime && !exportFileName) {
+        showToast("请至少选择一个导出字段", "error");
+        return;
+      }
+      
+      showLoading("导出中...");
+      
+      setTimeout(() => { // 模拟处理延迟
+        let exportData;
+        
+        // 根据导出范围获取数据
+        if (exportRange === 'random50') {
+          exportData = getRandomUnassignedNumbers(50);
+        } else if (exportRange === 'random100') {
+          exportData = getRandomUnassignedNumbers(100);
+        } else if (exportRange === 'filtered') {
+          exportData = getCurrentFilteredData();
+        } else { // 'all'
+          exportData = numberList;
+        }
+        
+        if (exportData.length === 0) {
+          hideLoading();
+          showToast("没有可导出的数据", "error");
+          return;
+        }
+        
+        // 显示实际导出数量（特别是随机导出时）
+        const actualCount = exportData.length;
+        let rangeText = "";
+        if (exportRange === 'random50') {
+          rangeText = `随机${actualCount}个未分配号码`;
+        } else if (exportRange === 'random100') {
+          rangeText = `随机${actualCount}个未分配号码`;
+        } else if (exportRange === 'filtered') {
+          rangeText = `当前筛选结果（${actualCount}条）`;
+        } else {
+          rangeText = `全部号码（${actualCount}条）`;
+        }
+        
+        let content = '';
+        let fileName = `us-numbers-${new Date().toLocaleDateString()}-${rangeText.replace(/[^\w]/g, '-')}`;
+        
+        if (exportFormat === 'csv') {
+          fileName += '.csv';
+          
+          // 生成CSV标题行
+          const headers = [];
+          if (exportPhone) headers.push('phoneNumber');
+          if (exportName) headers.push('name');
+          if (exportAge) headers.push('age');
+          if (exportAssignee) headers.push('assignee');
+          if (exportImportTime) headers.push('importTime');
+          if (exportFileName) headers.push('fileName');
+          content += headers.join(',') + '\n';
+          
+          // 生成CSV数据行
+          exportData.forEach(item => {
+            const fields = [];
+            if (exportPhone) fields.push(item.phoneNumber);
+            if (exportName) fields.push(item.name);
+            if (exportAge) fields.push(item.age);
+            if (exportAssignee) fields.push(item.assignee || '');
+            if (exportImportTime) fields.push(item.importTime);
+            if (exportFileName) fields.push(item.fileName || '');
+            content += fields.join(',') + '\n';
+          });
+        } else {
+          // TXT格式
+          fileName += '.txt';
+          exportData.forEach((item, index) => {
+            let line = `${index + 1}. `;
+            const parts = [];
+            if (exportPhone) parts.push(`号码: ${item.phoneNumber}`);
+            if (exportName) parts.push(`姓名: ${item.name}`);
+            if (exportAge) parts.push(`年龄: ${item.age}`);
+            if (exportAssignee) parts.push(`被分配人: ${item.assignee || '未分配'}`);
+            if (exportImportTime) parts.push(`导入时间: ${item.importTime}`);
+            if (exportFileName) parts.push(`来源文件: ${item.fileName || '手动添加'}`);
+            line += parts.join(' | ');
+            content += line + '\n';
+          });
+        }
+        
+        // 创建并下载文件
+        const blob = new Blob([content], { type: exportFormat === 'csv' ? 'text/csv;charset=utf-8;' : 'text/plain;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        
+        link.setAttribute('href', url);
+        link.setAttribute('download', fileName);
+        link.style.visibility = 'hidden';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showToast(`导出成功，共${actualCount}条数据`, "success");
+        closeExportModal();
+        hideLoading();
+      }, 800);
+    }
+
+    // 获取当前筛选后的数据
+    function getCurrentFilteredData() {
+      const statusFilter = document.getElementById('statusFilter').value;
+      const assigneeFilter = document.getElementById('assigneeFilter').value;
+      const searchKeyword = document.getElementById('searchInput').value.toLowerCase();
+
+      return numberList.filter(item => {
+        if (statusFilter === 'used' && !item.assignee) return false;
+        if (statusFilter === 'unused' && item.assignee) return false;
+        
+        if (assigneeFilter && item.assignee !== assigneeFilter) return false;
+        
+        if (searchKeyword && !(
+          item.phoneNumber.toLowerCase().includes(searchKeyword) || 
+          item.name.toLowerCase().includes(searchKeyword) ||
+          (item.assignee && item.assignee.toLowerCase().includes(searchKeyword))
+        )) return false;
+        
+        return true;
+      });
+    }
+
+    // 人员管理相关函数
+    function renderPersonList(filteredData = null) {
+      const data = filteredData || personList;
+      const container = document.getElementById('personListContainer');
+      container.innerHTML = '';
+
+      if (data.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 30px; color: #909399;">
+            暂无人员数据，请点击"新增人员"添加
+          </div>
+        `;
+      } else {
+        data.forEach(person => {
+          const card = document.createElement('div');
+          card.className = 'person-card';
+          
+          card.innerHTML = `
+            <div class="person-name">
+              <span>${person.name}</span>
+              <div>
+                <button class="btn btn-sm btn-default" onclick="editPerson(${person.id})">
+                  <i class="fa fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="deletePerson(${person.id})">
+                  <i class="fa fa-trash"></i>
+                </button>
+              </div>
+            </div>
+            <div class="person-info">用途：${person.purpose || '未设置'}</div>
+            <div class="person-info">显示名：${person.displayName}</div>
+            ${person.remark ? `<div class="person-info">备注：${person.remark}</div>` : ''}
+            <div class="person-info">关联号码：${getPersonNumberCount(person.id)}</div>
+          `;
+          
+          container.appendChild(card);
+        });
+      }
+    }
+
+    // 获取人员关联的号码数量
+    function getPersonNumberCount(personId) {
+      const person = personList.find(p => p.id === personId);
+      if (!person) return 0;
+      
+      return numberList.filter(num => num.assignee === person.displayName).length;
+    }
+
+    // 筛选人员
+    function filterPersons() {
+      const searchKeyword = document.getElementById('personSearchInput').value.toLowerCase();
+
+      const filtered = personList.filter(person => {
+        return person.name.toLowerCase().includes(searchKeyword) ||
+               (person.purpose && person.purpose.toLowerCase().includes(searchKeyword)) ||
+               (person.remark && person.remark.toLowerCase().includes(searchKeyword)) ||
+               person.displayName.toLowerCase().includes(searchKeyword);
+      });
+
+      renderPersonList(filtered);
+    }
+
+    // 显示新增人员表单
+    function showAddPersonForm() {
+      document.getElementById('personFormTitle').textContent = '新增人员';
+      document.getElementById('personForm').reset();
+      document.getElementById('personId').value = '';
+      document.getElementById('personFormCard').style.display = 'block';
+      // 滚动到表单位置
+      document.getElementById('personFormCard').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // 编辑人员
+    function editPerson(id) {
+      const person = personList.find(p => p.id === id);
+      if (person) {
+        document.getElementById('personFormTitle').textContent = '编辑人员';
+        document.getElementById('personId').value = person.id;
+        document.getElementById('personName').value = person.name;
+        document.getElementById('personPurpose').value = person.purpose;
+        document.getElementById('personRemark').value = person.remark;
+        document.getElementById('personFormCard').style.display = 'block';
+        // 滚动到表单位置
+        document.getElementById('personFormCard').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // 隐藏人员表单
+    function hidePersonForm() {
+      document.getElementById('personFormCard').style.display = 'none';
+    }
+
+    // 保存人员
+    function savePerson(event) {
+      event.preventDefault();
+      
+      const id = document.getElementById('personId').value;
+      const name = document.getElementById('personName').value.trim();
+      const purpose = document.getElementById('personPurpose').value.trim();
+      const remark = document.getElementById('personRemark').value.trim();
+      
+      if (!name) {
+        showToast("请输入人员姓名", "error");
+        return;
+      }
+      
+      // 生成显示名
+      const displayName = purpose ? `${name}（${purpose}）` : name;
+      
+      showLoading("保存中...");
+      
+      setTimeout(() => { // 模拟网络延迟
+        if (id) {
+          // 更新现有人员
+          const index = personList.findIndex(p => p.id === parseInt(id));
+          if (index !== -1) {
+            const oldDisplayName = personList[index].displayName;
+            personList[index] = {
+              ...personList[index],
+              name,
+              purpose,
+              remark,
+              displayName
+            };
+            
+            // 如果显示名变了，更新相关号码的被分配人
+            if (oldDisplayName !== displayName) {
+              numberList.forEach(num => {
+                if (num.assignee === oldDisplayName) {
+                  num.assignee = displayName;
+                  // 添加日志记录
+                  addLog(num.id, '人员信息更新', `被分配人名称从 "${oldDisplayName}" 变更为 "${displayName}"`, num.assignee ? 'used' : 'unused');
+                }
+              });
+              saveNumbersToStorage();
+            }
+            
+            showToast('人员信息更新成功', "success");
+          }
+        } else {
+          // 新增人员
+          const newId = personList.length > 0 
+            ? Math.max(...personList.map(p => p.id)) + 1 
+            : 1;
+            
+          personList.push({
+            id: newId,
+            name,
+            purpose,
+            remark,
+            displayName
+          });
+          
+          showToast(`人员 "${displayName}" 新增成功`, "success");
+        }
+        
+        // 保存数据并刷新列表
+        savePersonsToStorage();
+        renderPersonList();
+        hidePersonForm();
+        hideLoading();
+      }, 500);
+    }
+
+    // 删除人员
+    function deletePerson(id) {
+      const person = personList.find(p => p.id === id);
+      if (!person) return;
+      
+      // 检查是否有关联的号码
+      const relatedNumbers = numberList.filter(num => num.assignee === person.displayName).length;
+      if (relatedNumbers > 0) {
+        if (!confirm(`该人员 "${person.displayName}" 关联了 ${relatedNumbers} 个号码，删除后这些号码将变为未分配状态，是否继续？`)) {
+          return;
+        }
+      } else {
+        if (!confirm(`确定要删除人员 "${person.displayName}" 吗？`)) {
+          return;
+        }
+      }
+      
+      showLoading("删除中...");
+      
+      setTimeout(() => { // 模拟网络延迟
+        const index = personList.findIndex(p => p.id === id);
+        if (index !== -1) {
+          // 更新关联号码
+          if (relatedNumbers > 0) {
+            numberList.forEach(num => {
+              if (num.assignee === person.displayName) {
+                num.assignee = "";
+                // 添加日志记录
+                addLog(num.id, '解除分配', `原被分配人 "${person.displayName}" 已删除，自动解除分配`, 'unused');
+              }
+            });
+            saveNumbersToStorage();
+          }
+          
+          // 删除人员
+          personList.splice(index, 1);
+          savePersonsToStorage();
+          
+          renderPersonList();
+          renderNumberList(); // 刷新号码列表，显示更新后的分配状态
+          showToast(`人员 "${person.displayName}" 已删除`, "success");
+        }
+        hideLoading();
+      }, 500);
+    }
+
+    // 提示框和加载动画控制
+    function showToast(message, type = "info") {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast'; // 重置样式
+      toast.classList.add('show', `toast-${type}`);
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    function showLoading(text = "处理中...") {
+      document.getElementById('loadingText').textContent = text;
+      document.getElementById('loading').classList.add('show');
+    }
+
+    function hideLoading() {
+      document.getElementById('loading').classList.remove('show');
+    }
+  </script>
+</body>
+</html>
