@@ -960,6 +960,9 @@
           <button class="btn btn-default" onclick="refreshList()">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="#aee2ff" stroke-width="2"/><path d="M10 3v4M10 13v4M3 10h4M13 10h4" stroke="#7fbcff" stroke-width="2"/></svg> 刷新
           </button>
+          <button class="btn btn-danger" id="bulkDeleteBtn" onclick="deleteSelectedNumbers()" style="display:none;">
+            批量删除
+          </button>
         </div>
       </div>
 
@@ -1017,9 +1020,10 @@
         <div class="table-container">
           <table class="table">
             <thead>
-              <tr>
-                    <th class="col-id" data-field="id" onclick="toggleSort('id')" style="cursor:pointer">序号 <span id="sort-id"></span></th>
-                    <th class="col-phone" data-field="phoneNumber" onclick="toggleSort('phoneNumber')" style="cursor:pointer">美国号码 <span id="sort-phoneNumber"></span></th>
+      <tr>
+        <th style="width:40px;"><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)"></th>
+        <th class="col-id" data-field="id" onclick="toggleSort('id')" style="cursor:pointer">序号 <span id="sort-id"></span></th>
+        <th class="col-phone" data-field="phoneNumber" onclick="toggleSort('phoneNumber')" style="cursor:pointer">美国号码 <span id="sort-phoneNumber"></span></th>
                     <th class="col-name" data-field="name" onclick="toggleSort('name')" style="cursor:pointer">姓名 <span id="sort-name"></span></th>
                     <th class="col-age" data-field="age" onclick="toggleSort('age')" style="cursor:pointer">年龄 <span id="sort-age"></span></th>
                     <th class="col-assignee" data-field="assignee" onclick="toggleSort('assignee')" style="cursor:pointer">被分配人 <span id="sort-assignee"></span></th>
@@ -1216,6 +1220,52 @@
     var parsedPasteData = []; // 解析后的粘贴数据
     var currentNumberId = null;
     var currentPersonId = null;
+    var selectedIds = new Set();
+
+    // 号码归一化：保留纯 10 位数字，移除国家码前导 1
+    function normalizePhone(input) {
+      if (!input) return '';
+      const digits = String(input).replace(/\D/g, '');
+      if (digits.length === 11 && digits.startsWith('1')) return digits.slice(1);
+      if (digits.length === 10) return digits;
+      return ''; // 非法返回空
+    }
+
+    function toggleSelectAll(checked) {
+      // 如果传入的是 checkbox 元素
+      const isChecked = typeof checked === 'boolean' ? checked : (checked && checked.checked);
+      selectedIds.clear();
+      if (isChecked) {
+        numberList.forEach(n => selectedIds.add(n.id));
+      }
+      // 更新行 checkbox 状态
+      document.querySelectorAll('.rowCheckbox').forEach(cb => cb.checked = isChecked);
+      document.getElementById('bulkDeleteBtn').style.display = isChecked ? 'inline-flex' : 'none';
+    }
+
+    function toggleRowSelect(cb) {
+      const id = parseInt(cb.getAttribute('data-id'));
+      if (cb.checked) selectedIds.add(id); else selectedIds.delete(id);
+      document.getElementById('bulkDeleteBtn').style.display = selectedIds.size > 0 ? 'inline-flex' : 'none';
+    }
+
+    function deleteSelectedNumbers() {
+      if (selectedIds.size === 0) return;
+      if (!confirm(`确定要删除选中的 ${selectedIds.size} 个号码吗？相关记录会被保留。`)) return;
+      selectedIds.forEach(id => {
+        const idx = numberList.findIndex(n => n.id === id);
+        if (idx !== -1) {
+          const num = numberList[idx];
+          numberList.splice(idx, 1);
+          addLog(id, '删除', `删除号码 ${num.phoneNumber}（${num.name}，${num.age}岁）`, 'unused');
+        }
+      });
+      saveNumbersToStorage();
+      renderNumberList();
+      selectedIds.clear();
+      document.getElementById('bulkDeleteBtn').style.display = 'none';
+      showToast('选中号码已删除', 'success');
+    }
   // 排序状态
   var sortField = ''; // 默认为空（按 id 保持原始顺序）
   var sortDirection = 'desc'; // 'asc' 或 'desc'
@@ -1420,10 +1470,10 @@
           return;
         }
         
-        // 验证号码格式
-        const phonePattern = /^\+1-\d{3}-\d{3}-\d{4}$/;
-        if (!phonePattern.test(phoneNumber)) {
-          errors.push(`第 ${lineNumber} 行：号码格式错误，应为 +1-XXX-XXX-XXXX`);
+        // 归一化并验证号码（转换为纯10位数字）
+        const normalized = normalizePhone(phoneNumber);
+        if (!normalized) {
+          errors.push(`第 ${lineNumber} 行：号码格式错误，应为美国号码，支持 +1 前缀或常见分隔符`);
         }
         
         // 验证姓名
@@ -1439,7 +1489,7 @@
         
         // 添加到解析数据列表
         parsedPasteData.push({
-          phoneNumber,
+          phoneNumber: normalized || phoneNumber,
           name,
           age: ageNum,
           assignee,
@@ -1554,6 +1604,15 @@
         ];
         savePersonsToStorage();
       }
+
+      // 归一化已加载的号码为纯10位数字（若可能）
+      numberList = numberList.map(n => {
+        try {
+          const norm = normalizePhone(n.phoneNumber);
+          return { ...n, phoneNumber: norm || n.phoneNumber };
+        } catch (e) { return n; }
+      });
+      }
     }
 
     // 保存数据到本地存储
@@ -1641,6 +1700,7 @@
           const tr = document.createElement('tr');
           // index + 1 表示在当前筛选/排序结果中的序号
           tr.innerHTML = `
+            <td style="width:40px;"><input type="checkbox" class="rowCheckbox" data-id="${item.id}" onchange="toggleRowSelect(this)"></td>
             <td class="col-id">${index + 1}</td>
             <td class="col-phone phone-number">${item.phoneNumber}</td>
             <td class="col-name">${item.name}</td>
@@ -1871,7 +1931,8 @@
       event.preventDefault();
       
       const id = document.getElementById('editId').value;
-      const phoneNumber = document.getElementById('editPhone').value;
+  const rawPhone = document.getElementById('editPhone').value;
+  const phoneNumber = normalizePhone(rawPhone);
       const name = document.getElementById('editName').value.trim();
       const age = parseInt(document.getElementById('editAge').value);
       const assigneeSelect = document.getElementById('editAssigneeSelect').value;
@@ -1890,10 +1951,9 @@
         return;
       }
       
-      // 验证号码格式
-      const phonePattern = /^\+1-\d{3}-\d{3}-\d{4}$/;
-      if (!phonePattern.test(phoneNumber)) {
-        showToast("请输入正确的美国号码格式：+1-XXX-XXX-XXXX", "error");
+      // 验证号码格式（归一化为纯10位数字）
+      if (!phoneNumber) {
+        showToast("请输入有效的美国号码（10位数字，支持 +1 前缀或常见格式）", "error");
         return;
       }
       
@@ -1952,7 +2012,7 @@
             
           numberList.push({
             id: newId,
-            phoneNumber,
+            phoneNumber, // 存储为纯10位数字
             name,
             age,
             assignee,
@@ -2182,7 +2242,8 @@
                 continue;
               }
               
-              const phoneNumber = fields[0].trim();
+              const rawPhone = fields[0].trim();
+              const phoneNumber = normalizePhone(rawPhone);
               const name = fields[1].trim();
               const age = parseInt(fields[2].trim());
               let assignee = fields.length > 3 ? fields[3].trim() : '';
@@ -2192,9 +2253,8 @@
                 assignee = defaultAssignee;
               }
               
-              // 验证字段
-              const phonePattern = /^\+1-\d{3}-\d{3}-\d{4}$/;
-              if (!phonePattern.test(phoneNumber)) {
+              // 验证字段（使用归一化后的纯10位数字）
+              if (!phoneNumber) {
                 errorCount++;
                 continue;
               }
