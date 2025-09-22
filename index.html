@@ -904,7 +904,7 @@
       <!-- 筛选区 -->
       <div class="card">
         <div class="filter-bar">
-          <select class="select" id="statusFilter" onchange="filterNumbers()">
+            <select class="select" id="statusFilter" onchange="filterNumbers()">
             <option value="">全部状态</option>
             <option value="used">已使用（有分配人）</option>
             <option value="unused">未使用（无分配人）</option>
@@ -915,8 +915,22 @@
             <!-- 人员列表将通过JS动态添加 -->
           </select>
 
-          <input type="text" class="input input-search" id="searchInput" 
-                 placeholder="搜索号码/姓名/被分配人" oninput="filterNumbers()">
+            <input type="text" class="input input-search" id="searchInput" 
+                   placeholder="搜索号码/姓名/被分配人" oninput="filterNumbers()">
+
+            <!-- 排序控制 -->
+            <select class="select" id="sortField" onchange="filterNumbers()" style="max-width:180px;">
+              <option value="">默认排序（ID）</option>
+              <option value="phoneNumber">号码</option>
+              <option value="name">姓名</option>
+              <option value="age">年龄</option>
+              <option value="assignee">被分配人</option>
+              <option value="importTime">导入时间</option>
+            </select>
+            <select class="select" id="sortDirection" onchange="filterNumbers()" style="width:120px;">
+              <option value="desc">降序</option>
+              <option value="asc">升序</option>
+            </select>
         </div>
       </div>
 
@@ -932,14 +946,14 @@
           <table class="table">
             <thead>
               <tr>
-                <th>序号</th>
-                <th>美国号码</th>
-                <th>姓名</th>
-                <th>年龄</th>
-                <th>被分配人</th>
-                <th>导入时间</th>
-                <th>导入文件名</th>
-                <th>操作</th>
+                    <th data-field="id" onclick="toggleSort('id')" style="cursor:pointer">序号 <span id="sort-id"></span></th>
+                    <th data-field="phoneNumber" onclick="toggleSort('phoneNumber')" style="cursor:pointer">美国号码 <span id="sort-phoneNumber"></span></th>
+                    <th data-field="name" onclick="toggleSort('name')" style="cursor:pointer">姓名 <span id="sort-name"></span></th>
+                    <th data-field="age" onclick="toggleSort('age')" style="cursor:pointer">年龄 <span id="sort-age"></span></th>
+                    <th data-field="assignee" onclick="toggleSort('assignee')" style="cursor:pointer">被分配人 <span id="sort-assignee"></span></th>
+                    <th data-field="importTime" onclick="toggleSort('importTime')" style="cursor:pointer">导入时间 <span id="sort-importTime"></span></th>
+                    <th data-field="fileName" onclick="toggleSort('fileName')" style="cursor:pointer">导入文件名 <span id="sort-fileName"></span></th>
+                    <th>操作</th>
               </tr>
             </thead>
             <tbody id="numberTableBody">
@@ -1130,6 +1144,9 @@
     var parsedPasteData = []; // 解析后的粘贴数据
     var currentNumberId = null;
     var currentPersonId = null;
+  // 排序状态
+  var sortField = ''; // 默认为空（按 id 保持原始顺序）
+  var sortDirection = 'desc'; // 'asc' 或 'desc'
 
     // 确保在任何环境中都有 localStorage 变量可用（避免在测试环境中 ReferenceError）
     (function(){
@@ -1184,7 +1201,7 @@
       // 从本地存储加载数据
       loadAllData();
       // 渲染列表
-      renderNumberList();
+      renderNumberList(getSortedFilteredData());
       renderPersonList();
       updatePersonSelectors();
       hideLoading();
@@ -1236,8 +1253,21 @@
 
     // 自动化策略：在测试或无对话框实现环境中，自动允许所有 confirm
     try {
-      if (typeof window !== 'undefined' && typeof window.confirm !== 'function') {
-        window.confirm = function() { return true; };
+      if (typeof window !== 'undefined') {
+        // 如果原生 confirm 存在，包裹一层 try/catch：若调用抛出（例如 jsdom 未实现），则默认返回 true
+        if (typeof window.confirm === 'function') {
+          const __orig_confirm = window.confirm;
+          window.confirm = function(msg) {
+            try {
+              return __orig_confirm(msg);
+            } catch (e) {
+              return true;
+            }
+          }
+        } else {
+          // 完全不存在时，直接提供一个始终返回 true 的实现
+          window.confirm = function() { return true; };
+        }
       }
     } catch (e) {}
 
@@ -1537,7 +1567,7 @@
       } else {
         data.forEach((item, index) => {
           const tr = document.createElement('tr');
-          
+          // index + 1 表示在当前筛选/排序结果中的序号
           tr.innerHTML = `
             <td>${index + 1}</td>
             <td class="phone-number">${item.phoneNumber}</td>
@@ -1566,6 +1596,66 @@
       updateStats(data);
     }
 
+    // 切换列排序（表头点击）
+    function toggleSort(field) {
+      if (sortField === field) {
+        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortField = field;
+        // 保持默认方向（当点击非 id 字段时使用 asc 更直观）
+        sortDirection = field === 'id' ? 'desc' : 'asc';
+      }
+      // 更新下拉选择的同步显示
+      const sf = document.getElementById('sortField');
+      const sd = document.getElementById('sortDirection');
+      if (sf) sf.value = sortField || '';
+      if (sd) sd.value = sortDirection || 'desc';
+
+      // 更新表头指示器
+      updateSortIndicators();
+      filterNumbers();
+    }
+
+    function updateSortIndicators() {
+      const fields = ['id','phoneNumber','name','age','assignee','importTime','fileName'];
+      fields.forEach(f => {
+        const el = document.getElementById('sort-' + f);
+        if (!el) return;
+        if (sortField === f) {
+          el.textContent = sortDirection === 'asc' ? '▲' : '▼';
+        } else {
+          el.textContent = '';
+        }
+      });
+    }
+
+    // 通用比较函数（支持空值）
+    function compareByField(a, b, field) {
+      const va = a[field] == null ? '' : a[field];
+      const vb = b[field] == null ? '' : b[field];
+
+      // 若为数字字段
+      if (field === 'age' || field === 'id') {
+        const na = Number(va) || 0;
+        const nb = Number(vb) || 0;
+        return na - nb;
+      }
+
+      // 尝试解析日期
+      if (field === 'importTime') {
+        const da = new Date(va).getTime() || 0;
+        const db = new Date(vb).getTime() || 0;
+        return da - db;
+      }
+
+      // 字符串比较，忽略大小写
+      const sa = String(va).toLowerCase();
+      const sb = String(vb).toLowerCase();
+      if (sa < sb) return -1;
+      if (sa > sb) return 1;
+      return 0;
+    }
+
     // 更新统计信息
     function updateStats(data) {
       const total = data.length;
@@ -1583,7 +1673,14 @@
       const assigneeFilter = document.getElementById('assigneeFilter').value;
       const searchKeyword = document.getElementById('searchInput').value.toLowerCase();
 
-      const filtered = numberList.filter(item => {
+      // 同步从下拉选择器读取排序设置（如果用户通过下拉选择）
+      const sf = document.getElementById('sortField');
+      const sd = document.getElementById('sortDirection');
+      if (sf) sortField = sf.value || '';
+      if (sd) sortDirection = sd.value || sortDirection;
+      updateSortIndicators();
+
+  const filtered = numberList.filter(item => {
         // 状态筛选
         if (statusFilter === 'used' && !item.assignee) return false;
         if (statusFilter === 'unused' && item.assignee) return false;
@@ -1601,8 +1698,18 @@
         return true;
       });
 
-      renderNumberList(filtered);
+      // 对过滤后的结果应用排序并渲染
+      const sorted = (function(arr) {
+        if (!sortField || sortField === '') return arr.slice();
+        return arr.slice().sort((a,b) => {
+          const cmp = compareByField(a,b,sortField);
+          return sortDirection === 'asc' ? cmp : -cmp;
+        });
+      })(filtered);
+
+      renderNumberList(sorted);
     }
+
 
     // 显示新增号码表单
     function showAddForm() {
@@ -2229,7 +2336,7 @@
           // 获取指定数量的随机未分配号码（去重）
           exportData = getRandomUnassignedNumbers(Math.max(1, Math.min(10000, exportRandomCount)));
         } else if (exportRange === 'filtered') {
-          exportData = getCurrentFilteredData();
+          exportData = getSortedFilteredData();
         } else { // 'all'
           exportData = numberList;
         }
@@ -2354,6 +2461,19 @@
         
         return true;
       });
+    }
+
+    // 对 getCurrentFilteredData 的结果进行排序并返回新数组
+    function getSortedFilteredData() {
+      const arr = getCurrentFilteredData();
+      if (!sortField || sortField === '') return arr.slice();
+
+      const sorted = arr.slice().sort((a, b) => {
+        const cmp = compareByField(a, b, sortField);
+        return sortDirection === 'asc' ? cmp : -cmp;
+      });
+
+      return sorted;
     }
 
     // 人员管理相关函数
