@@ -3,20 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>US号码管家 - 支持随机导出功能</title>
+  <title>US号码管家 - 动漫风格</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    /* 全局基础样式 */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Arial Rounded MT Bold', '微软雅黑', sans-serif;
+      font-family: 'Nunito', 'Arial Rounded MT Bold', '微软雅黑', sans-serif;
     }
     body {
-      background-color: #f9fafb;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #aee2ff 0%, #f6d6ff 100%);
       padding: 20px;
       color: #1f2937;
       line-height: 1.5;
+      position: relative;
+      overflow-x: hidden;
     }
     .page {
       display: none;
@@ -32,11 +35,22 @@
 
     /* 卡片与容器 */
     .card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
-      padding: 20px;
-      margin-bottom: 20px;
+      background: linear-gradient(120deg, #fff7fa 0%, #e3f6ff 100%);
+      border-radius: 24px;
+      box-shadow: 0 6px 24px rgba(160, 226, 255, 0.15), 0 1.5px 6px rgba(246, 214, 255, 0.12);
+      padding: 24px;
+      margin-bottom: 24px;
+      transition: box-shadow 0.3s, transform 0.2s;
+      animation: cardPop 0.5s cubic-bezier(.68,-0.55,.27,1.55);
+    }
+    @keyframes cardPop {
+      0% { transform: scale(0.96); box-shadow: 0 0 0 rgba(0,0,0,0); }
+      80% { transform: scale(1.04); }
+      100% { transform: scale(1); }
+    }
+    .card:hover {
+      box-shadow: 0 12px 32px rgba(160, 226, 255, 0.22), 0 3px 12px rgba(246, 214, 255, 0.18);
+      transform: translateY(-2px) scale(1.02);
     }
     .container {
       max-width: 1400px;
@@ -54,35 +68,42 @@
 
     /* 按钮样式 */
     .btn {
-      padding: 7px 14px;
-      border-radius: 8px;
+      padding: 10px 20px;
+      border-radius: 16px;
       border: none;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 16px;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      transition: all 0.2s;
+      gap: 8px;
+      transition: all 0.2s, box-shadow 0.3s;
+      font-weight: 700;
+      background: linear-gradient(90deg, #aee2ff 0%, #f6d6ff 100%);
+      box-shadow: 0 2px 8px rgba(160, 226, 255, 0.12);
+    }
+    .btn:active {
+      transform: scale(0.96);
     }
     .btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 6px 18px rgba(160, 226, 255, 0.18);
     }
     .btn-primary {
-      background-color: #409eff;
-      color: white;
+  background: linear-gradient(90deg, #7fbcff 0%, #f6d6ff 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(127, 188, 255, 0.18);
     }
     .btn-success {
-      background-color: #67c23a;
-      color: white;
+  background: linear-gradient(90deg, #a8ff78 0%, #78ffd6 100%);
+  color: #fff;
     }
     .btn-default {
-      background-color: #f5f7fa;
-      color: #606266;
+  background: linear-gradient(90deg, #f5f7fa 0%, #e3f6ff 100%);
+  color: #606266;
     }
     .btn-danger {
-      background-color: #f56c6c;
-      color: white;
+  background: linear-gradient(90deg, #ffb6b9 0%, #f6d6ff 100%);
+  color: #fff;
     }
     .btn-sm {
       padding: 4px 10px;
@@ -91,17 +112,17 @@
 
     /* 输入框与选择器 */
     .input, .select {
-      padding: 7px 12px;
-      border-radius: 8px;
-      border: 1px solid #e4e7ed;
-      font-size: 14px;
-      width: 100%;
-      transition: border 0.2s;
+  padding: 10px 16px;
+  border-radius: 16px;
+  border: 1.5px solid #aee2ff;
+  font-size: 16px;
+  width: 100%;
+  transition: border 0.2s, box-shadow 0.3s;
     }
     .input:focus, .select:focus {
-      border-color: #409eff;
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
+  border-color: #7fbcff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(127, 188, 255, 0.18);
     }
     .input-search {
       flex: 1;
@@ -140,23 +161,24 @@
       border-bottom: 1px solid #f0f2f5;
     }
     .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 22px;
-      font-weight: bold;
-      color: #409eff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 28px;
+  font-weight: bold;
+  color: #7fbcff;
     }
     .logo-icon {
-      width: 30px;
-      height: 30px;
-      background-color: #409eff;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 18px;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #aee2ff 0%, #f6d6ff 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 24px;
+  box-shadow: 0 2px 8px rgba(160, 226, 255, 0.18);
     }
     .header-actions {
       display: flex;
@@ -179,15 +201,9 @@
 
     /* 表格样式 */
     .table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-    .table th, .table td {
-      padding: 12px 15px;
-      text-align: center;
-      border-bottom: 1px solid #f0f2f5;
-      white-space: nowrap;
+  /* SVG吉祥物 */
+  background: none;
+  padding: 0;
     }
     .table th {
       background-color: #f5f7fa;
@@ -658,6 +674,18 @@
 </head>
 <body>
   <div class="container">
+    <!-- 动漫风底部吉祥物 -->
+    <div style="position:fixed;bottom:0;right:0;z-index:0;pointer-events:none;">
+      <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+        <ellipse cx="60" cy="110" rx="40" ry="10" fill="#aee2ff"/>
+        <circle cx="60" cy="70" r="35" fill="#fff7fa" stroke="#aee2ff" stroke-width="3"/>
+        <ellipse cx="60" cy="80" rx="18" ry="10" fill="#f6d6ff"/>
+        <circle cx="60" cy="65" r="15" fill="#f6d6ff"/>
+        <ellipse cx="52" cy="62" rx="3" ry="2" fill="#7fbcff"/>
+        <ellipse cx="68" cy="62" rx="3" ry="2" fill="#7fbcff"/>
+        <path d="M54 75 Q60 80 66 75" stroke="#7fbcff" stroke-width="2" fill="none"/>
+      </svg>
+    </div>
     <!-- 提示框组件 -->
     <div class="toast" id="toast"></div>
     
@@ -799,13 +827,19 @@
           
           <div class="form-item">
             <label class="form-label">导出范围</label>
-            <select class="select" id="exportRange">
-              <option value="filtered">当前筛选结果</option>
-              <option value="all">全部号码</option>
-              <option value="random50">随机50个未分配号码</option>
-              <option value="random100">随机100个未分配号码</option>
-            </select>
-            <div id="randomExportHint" class="form-hint">选择随机导出时，将从所有未分配号码中随机选择指定数量</div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+              <select class="select" id="exportRange" style="flex:1;min-width:220px;">
+                <option value="filtered">当前筛选结果</option>
+                <option value="all">全部号码</option>
+                <option value="random">随机未分配号码</option>
+              </select>
+              <input type="number" id="exportRandomCount" class="input" value="50" min="1" max="10000" style="width:120px;" title="随机导出数量（仅在选择随机时生效）">
+              <select class="select" id="exportAssignTo" style="min-width:200px;">
+                <option value="">导出时不分配（可选）</option>
+                <!-- 人员列表将通过JS动态添加 -->
+              </select>
+            </div>
+            <div id="randomExportHint" class="form-hint">选择随机导出时，将从所有未分配号码中随机选择指定数量；可在导出时选择将这些号码一并分配给某人。</div>
           </div>
           
           <div class="form-item">
@@ -828,21 +862,31 @@
       <!-- 顶部导航 -->
       <div class="header">
         <div class="logo">
-          <div class="logo-icon">📞</div>
+          <div class="logo-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <ellipse cx="16" cy="28" rx="12" ry="4" fill="#aee2ff"/>
+              <circle cx="16" cy="16" r="12" fill="#fff7fa" stroke="#aee2ff" stroke-width="2"/>
+              <ellipse cx="16" cy="19" rx="6" ry="3" fill="#f6d6ff"/>
+              <circle cx="16" cy="14" r="5" fill="#f6d6ff"/>
+              <ellipse cx="13" cy="13" rx="1.2" ry="0.8" fill="#7fbcff"/>
+              <ellipse cx="19" cy="13" rx="1.2" ry="0.8" fill="#7fbcff"/>
+              <path d="M14 19 Q16 21 18 19" stroke="#7fbcff" stroke-width="1.5" fill="none"/>
+            </svg>
+          </div>
           US号码管家
         </div>
         <div class="header-actions">
           <button class="btn btn-success" onclick="showAddForm()">
-            ➕ 新增号码
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="10" fill="#aee2ff"/><path d="M10 5v10M5 10h10" stroke="#7fbcff" stroke-width="2"/></svg> 新增号码
           </button>
           <button class="btn btn-primary" onclick="openImportModal()">
-            📥 批量导入
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="4" fill="#f6d6ff"/><path d="M10 7v6M7 10h6" stroke="#7fbcff" stroke-width="2"/></svg> 批量导入
           </button>
           <button class="btn btn-primary" onclick="openExportModal()">
-            📤 批量导出
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="4" fill="#f6d6ff"/><path d="M10 13V7M7 10h6" stroke="#7fbcff" stroke-width="2"/></svg> 批量导出
           </button>
           <button class="btn btn-default" onclick="refreshList()">
-            🔄 刷新
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="#aee2ff" stroke-width="2"/><path d="M10 3v4M10 13v4M3 10h4M13 10h4" stroke="#7fbcff" stroke-width="2"/></svg> 刷新
           </button>
         </div>
       </div>
@@ -850,10 +894,10 @@
       <!-- 主导航 -->
       <div class="main-nav">
         <button class="btn btn-primary" onclick="showPage('listPage')">
-          📋 号码管理
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="4" fill="#aee2ff"/><rect x="5" y="5" width="8" height="8" rx="2" fill="#fff7fa"/></svg> 号码管理
         </button>
         <button class="btn btn-default" onclick="showPage('personPage')">
-          👥 人员管理
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><ellipse cx="6" cy="7" rx="3" ry="3" fill="#aee2ff"/><ellipse cx="12" cy="7" rx="3" ry="3" fill="#aee2ff"/><rect x="3" y="11" width="12" height="4" rx="2" fill="#fff7fa"/></svg> 人员管理
         </button>
       </div>
 
@@ -910,7 +954,7 @@
     <div class="page" id="editPage">
       <div class="header">
         <button class="btn btn-default" onclick="returnToList()">
-          ← 返回列表
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M12 9H6M9 6l-3 3 3 3" stroke="#7fbcff" stroke-width="2"/></svg> 返回列表
         </button>
         <h2 id="editTitle">编辑号码</h2>
       </div>
@@ -1021,14 +1065,14 @@
           <input type="text" class="input input-search" id="personSearchInput" 
                  placeholder="搜索人员姓名/用途" oninput="filterPersons()">
           <button class="btn btn-success" onclick="showAddPersonForm()">
-            ➕ 新增人员
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="10" fill="#aee2ff"/><path d="M10 5v10M5 10h10" stroke="#7fbcff" stroke-width="2"/></svg> 新增人员
           </button>
         </div>
       </div>
 
       <div class="card">
         <div class="section-title">
-          <i class="fa fa-users"></i> 人员列表
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><ellipse cx="7" cy="8" rx="4" ry="4" fill="#aee2ff"/><ellipse cx="13" cy="8" rx="4" ry="4" fill="#aee2ff"/><rect x="4" y="13" width="12" height="4" rx="2" fill="#fff7fa"/></svg> 人员列表
         </div>
         <div id="personListContainer" class="person-list">
           <!-- 人员列表由JS动态生成 -->
@@ -1038,7 +1082,7 @@
       <!-- 新增/编辑人员表单 -->
       <div class="card" id="personFormCard" style="display: none;">
         <div class="section-title">
-          <i class="fa fa-user"></i> <span id="personFormTitle">新增人员</span>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><ellipse cx="10" cy="8" rx="6" ry="6" fill="#aee2ff"/><rect x="6" y="14" width="8" height="4" rx="2" fill="#fff7fa"/></svg> <span id="personFormTitle">新增人员</span>
         </div>
         <form class="form" id="personForm" onsubmit="savePerson(event)">
           <input type="hidden" id="personId">
@@ -1079,12 +1123,60 @@
 
   <script>
     // 全局数据存储
-    let numberList = [];    // 号码列表
-    let logList = [];       // 操作日志
-    let personList = [];    // 人员列表
-    let parsedPasteData = []; // 解析后的粘贴数据
-    let currentNumberId = null;
-    let currentPersonId = null;
+    // 使用 var 以便在测试环境（jsdom）中通过 window.xxx 访问和修改
+    var numberList = [];    // 号码列表
+    var logList = [];       // 操作日志
+    var personList = [];    // 人员列表
+    var parsedPasteData = []; // 解析后的粘贴数据
+    var currentNumberId = null;
+    var currentPersonId = null;
+
+    // 确保在任何环境中都有 localStorage 变量可用（避免在测试环境中 ReferenceError）
+    (function(){
+      var stub = (function(){
+        var store = Object.create(null);
+        return {
+          getItem: function(key) { return store.hasOwnProperty(key) ? store[key] : null; },
+          setItem: function(key, value) { store[key] = String(value); },
+          removeItem: function(key) { delete store[key]; },
+          clear: function() { store = Object.create(null); }
+        };
+      })();
+
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          // 浏览器/jsdom 环境
+          try { localStorage = window.localStorage; } catch (e) { localStorage = window.localStorage || stub; }
+        } else {
+          localStorage = stub;
+        }
+      } catch (e) {
+        try { localStorage = global.localStorage || stub; } catch (e2) { localStorage = stub; }
+      }
+
+      // 保证 window.localStorage 指向相同实现
+      try { if (typeof window !== 'undefined') window.localStorage = localStorage; } catch (e) {}
+    })();
+
+    // 在无 localStorage 的环境（例如某些测试环境）提供简单全局回退
+    (function(){
+      try {
+        if (typeof localStorage === 'undefined' || localStorage === null) {
+          var store = Object.create(null);
+          var stub = {
+            getItem: function(key) { return store.hasOwnProperty(key) ? store[key] : null; },
+            setItem: function(key, value) { store[key] = String(value); },
+            removeItem: function(key) { delete store[key]; },
+            clear: function() { store = Object.create(null); }
+          };
+          try { window.localStorage = stub; } catch(e) {}
+          try { global.localStorage = stub; } catch(e) {}
+          try { localStorage = stub; } catch(e) {}
+        }
+      } catch (e) {
+        // 忽略
+      }
+    })();
 
     // 初始化页面
     window.onload = function() {
@@ -1106,6 +1198,64 @@
       document.getElementById('logPage').classList.remove('active');
       document.getElementById('personPage').classList.remove('active');
     }
+
+    // --- Safe localStorage wrapper with in-memory fallback ---
+    var __inMemoryStore = {};
+    function safeGetItem(key) {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage && typeof window.localStorage.getItem === 'function') {
+          return window.localStorage.getItem(key);
+        }
+      } catch (e) {}
+      return __inMemoryStore.hasOwnProperty(key) ? __inMemoryStore[key] : null;
+    }
+    function safeSetItem(key, value) {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage && typeof window.localStorage.setItem === 'function') {
+          return window.localStorage.setItem(key, value);
+        }
+      } catch (e) {}
+      __inMemoryStore[key] = String(value);
+    }
+    function safeRemoveItem(key) {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage && typeof window.localStorage.removeItem === 'function') {
+          return window.localStorage.removeItem(key);
+        }
+      } catch (e) {}
+      delete __inMemoryStore[key];
+    }
+    function safeClear() {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage && typeof window.localStorage.clear === 'function') {
+          return window.localStorage.clear();
+        }
+      } catch (e) {}
+      __inMemoryStore = {};
+    }
+
+    // 自动化策略：在测试或无对话框实现环境中，自动允许所有 confirm
+    try {
+      if (typeof window !== 'undefined' && typeof window.confirm !== 'function') {
+        window.confirm = function() { return true; };
+      }
+    } catch (e) {}
+
+    // 为 URL.createObjectURL 提供简单回退（jsdom 环境可能未实现）
+    try {
+      if (typeof window !== 'undefined' && (!window.URL || typeof window.URL.createObjectURL !== 'function')) {
+        window.URL = window.URL || {};
+        window.URL.createObjectURL = function(blob) {
+          try {
+            // 尝试读取 blob 内容（如果可能）
+            if (blob && typeof blob.text === 'function') {
+              return 'data:;base64,' + Buffer.from(blob.text ? blob.text() : '').toString('base64');
+            }
+          } catch (e) {}
+          return 'data:application/octet-stream,generated';
+        };
+      }
+    } catch (e) {}
 
     // 通用页面切换
     function showPage(pageId) {
@@ -1230,9 +1380,9 @@
     // 加载所有数据
     function loadAllData() {
       // 从本地存储获取，没有则初始化示例数据
-      const savedNumbers = localStorage.getItem('usNumbers');
-      const savedLogs = localStorage.getItem('usLogs');
-      const savedPersons = localStorage.getItem('usPersons');
+      const savedNumbers = safeGetItem('usNumbers');
+      const savedLogs = safeGetItem('usLogs');
+      const savedPersons = safeGetItem('usPersons');
 
       // 加载号码数据
       if (savedNumbers) {
@@ -1306,13 +1456,13 @@
 
     // 保存数据到本地存储
     function saveNumbersToStorage() {
-      localStorage.setItem('usNumbers', JSON.stringify(numberList));
+      safeSetItem('usNumbers', JSON.stringify(numberList));
     }
     function saveLogsToStorage() {
-      localStorage.setItem('usLogs', JSON.stringify(logList));
+      safeSetItem('usLogs', JSON.stringify(logList));
     }
     function savePersonsToStorage() {
-      localStorage.setItem('usPersons', JSON.stringify(personList));
+      safeSetItem('usPersons', JSON.stringify(personList));
       // 更新所有人员选择器
       updatePersonSelectors();
     }
@@ -1360,6 +1510,15 @@
         pasteOption.value = person.displayName;
         pasteOption.textContent = person.displayName;
         pasteAssignee.appendChild(pasteOption);
+
+          // 导出模态框的分配人选择器
+          const exportAssignSelect = document.getElementById('exportAssignTo');
+          if (exportAssignSelect) {
+            const exportOption = document.createElement('option');
+            exportOption.value = person.displayName;
+            exportOption.textContent = person.displayName;
+            exportAssignSelect.appendChild(exportOption);
+          }
       });
     }
 
@@ -1783,18 +1942,22 @@
     }
 
     function doImport() {
-      // 判断当前激活的导入方式
-      const isFileImport = document.getElementById('fileImportContent').classList.contains('active');
-      
-      if (isFileImport) {
+      // 判断当前导入来源：如果文件输入中存在文件则优先使用文件导入；否则如果已经解析了粘贴数据则使用粘贴导入
+      const fileInput = document.getElementById('importFile');
+      const hasFile = fileInput && fileInput.files && fileInput.files.length > 0;
+
+      const isFileImport = hasFile || document.getElementById('fileImportContent').classList.contains('active');
+
+      // 如果没有上传文件但已经解析了粘贴数据，则优先使用粘贴导入
+      if (!hasFile && parsedPasteData && parsedPasteData.length > 0) {
+        // 强制走粘贴导入分支
+        // 下面的逻辑在 else 分支中实现
+        // fall through to paste import
+      }
+
+      if (isFileImport && hasFile) {
         // 文件导入逻辑
-        const fileInput = document.getElementById('importFile');
         const defaultAssignee = document.getElementById('defaultAssignee').value;
-        
-        if (!fileInput.files || fileInput.files.length === 0) {
-          showToast("请选择要导入的CSV文件", "error");
-          return;
-        }
         
         const file = fileInput.files[0];
         if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
@@ -1919,7 +2082,7 @@
         reader.readAsText(file);
       } else {
         // 粘贴导入逻辑
-        if (parsedPasteData.length === 0) {
+        if (!parsedPasteData || parsedPasteData.length === 0) {
           showToast("请先粘贴数据并解析", "error");
           return;
         }
@@ -2021,15 +2184,20 @@
     function getRandomUnassignedNumbers(count) {
       // 筛选所有未分配的号码
       const unassignedNumbers = numberList.filter(num => !num.assignee);
-      
-      // 如果未分配号码不足，返回全部
+
+      // 如果未分配号码不足，返回全部（浅拷贝）
       if (unassignedNumbers.length <= count) {
-        return unassignedNumbers;
+        return [...unassignedNumbers];
       }
-      
-      // 随机排序并取前count个
-      const shuffled = [...unassignedNumbers].sort(() => 0.5 - Math.random());
-      return shuffled.slice(0, count);
+
+      // 使用Fisher-Yates实现真正的随机不重复抽样
+      const arr = [...unassignedNumbers];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+
+      return arr.slice(0, count);
     }
 
     function doExport() {
@@ -2040,8 +2208,10 @@
       const exportAssignee = document.getElementById('exportAssignee').checked;
       const exportImportTime = document.getElementById('exportImportTime').checked;
       const exportFileName = document.getElementById('exportFileName').checked;
-      const exportRange = document.getElementById('exportRange').value;
-      const exportFormat = document.getElementById('exportFormat').value;
+  const exportRange = document.getElementById('exportRange').value;
+  const exportFormat = document.getElementById('exportFormat').value;
+  const exportRandomCount = parseInt(document.getElementById('exportRandomCount').value) || 50;
+  const exportAssignTo = document.getElementById('exportAssignTo').value; // 可选的导出时分配
       
       // 检查是否至少选择了一个字段
       if (!exportPhone && !exportName && !exportAge && !exportAssignee && !exportImportTime && !exportFileName) {
@@ -2055,10 +2225,9 @@
         let exportData;
         
         // 根据导出范围获取数据
-        if (exportRange === 'random50') {
-          exportData = getRandomUnassignedNumbers(50);
-        } else if (exportRange === 'random100') {
-          exportData = getRandomUnassignedNumbers(100);
+        if (exportRange === 'random') {
+          // 获取指定数量的随机未分配号码（去重）
+          exportData = getRandomUnassignedNumbers(Math.max(1, Math.min(10000, exportRandomCount)));
         } else if (exportRange === 'filtered') {
           exportData = getCurrentFilteredData();
         } else { // 'all'
@@ -2071,8 +2240,8 @@
           return;
         }
         
-        // 显示实际导出数量（特别是随机导出时）
-        const actualCount = exportData.length;
+  // 显示实际导出数量（特别是随机导出时）
+  const actualCount = exportData.length;
         let rangeText = "";
         if (exportRange === 'random50') {
           rangeText = `随机${actualCount}个未分配号码`;
@@ -2128,6 +2297,24 @@
           });
         }
         
+        // 如果选择了在导出时分配目标，则执行分配并记录日志（仅对未分配的号码生效）
+        if (exportAssignTo) {
+          // 找到对应人员显示名（如果是 displayName 直接匹配即可）
+          const assignToDisplay = exportAssignTo;
+          // 更新数据源中对应号码的 assignee 字段并写日志
+          exportData.forEach(item => {
+            const idx = numberList.findIndex(n => n.id === item.id);
+            if (idx !== -1 && !numberList[idx].assignee) {
+              numberList[idx].assignee = assignToDisplay;
+              // 添加日志记录
+              addLog(numberList[idx].id, '导出并分配', `导出时分配给 "${assignToDisplay}"（姓名：${numberList[idx].name}，年龄：${numberList[idx].age}）`, 'used');
+            }
+          });
+          // 保存变更
+          saveNumbersToStorage();
+          // 重新生成导出内容中被分配人的显示（如果需要）
+        }
+
         // 创建并下载文件
         const blob = new Blob([content], { type: exportFormat === 'csv' ? 'text/csv;charset=utf-8;' : 'text/plain;charset=utf-8;' });
         const link = document.createElement('a');
@@ -2238,7 +2425,10 @@
       document.getElementById('personId').value = '';
       document.getElementById('personFormCard').style.display = 'block';
       // 滚动到表单位置
-      document.getElementById('personFormCard').scrollIntoView({ behavior: 'smooth' });
+      const card = document.getElementById('personFormCard');
+      if (card && typeof card.scrollIntoView === 'function') {
+        card.scrollIntoView({ behavior: 'smooth' });
+      }
     }
 
     // 编辑人员
@@ -2251,8 +2441,11 @@
         document.getElementById('personPurpose').value = person.purpose;
         document.getElementById('personRemark').value = person.remark;
         document.getElementById('personFormCard').style.display = 'block';
-        // 滚动到表单位置
-        document.getElementById('personFormCard').scrollIntoView({ behavior: 'smooth' });
+        // 滚动到表单位置（仅在环境支持时）
+        const card = document.getElementById('personFormCard');
+        if (card && typeof card.scrollIntoView === 'function') {
+          card.scrollIntoView({ behavior: 'smooth' });
+        }
       }
     }
 

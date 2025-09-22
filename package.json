@@ -1,0 +1,13 @@
+{
+  "name": "us-number-manager-tests",
+  "version": "1.0.0",
+  "description": "Automated tests for US 号码管家 (jsdom + mocha)",
+  "scripts": {
+    "test": "mocha --timeout 10000"
+  },
+  "devDependencies": {
+    "jsdom": "^22.1.0",
+    "mocha": "^10.2.0",
+    "chai": "^4.3.7"
+  }
+}
