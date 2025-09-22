@@ -896,6 +896,24 @@
               </label>
             </div>
           </div>
+
+            <!-- 重复号码检测模态框 -->
+            <div class="modal-backdrop" id="duplicateModal">
+              <div class="modal">
+                <div class="modal-header">
+                  <div class="modal-title">重复号码检测</div>
+                  <button class="modal-close" onclick="closeDuplicateModal()">×</button>
+                </div>
+                <div class="modal-body">
+                  <div class="form-hint">以下为检测到的重复号码分组（按纯10位号码统计）。可查看每组内详情并选择删除多余项。</div>
+                  <div id="duplicateListContainer" style="margin-top:12px; max-height:60vh; overflow:auto;"></div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-default" onclick="closeDuplicateModal()">关闭</button>
+                  <button class="btn btn-danger" onclick="deleteAllDuplicateGroups()">删除所有重复项（保留每组首项）</button>
+                </div>
+              </div>
+            </div>
           
           <div class="form-item">
             <label class="form-label">导出范围</label>
@@ -1015,6 +1033,7 @@
           共 <span id="totalCount">0</span> 条 
           <span class="stats-used" id="usedCount">已使用 0 条</span>
           <span class="stats-unused" id="unusedCount">未使用 0 条</span>
+          <span id="duplicateStats" class="stats-unused">重复号码 <strong id="duplicateCount">0</strong> 个 <button class="btn btn-sm btn-default" id="viewDuplicatesBtn" onclick="openDuplicateModal()" style="margin-left:8px;">查看</button></span>
         </div>
 
         <div class="table-container">
@@ -1605,14 +1624,13 @@
         savePersonsToStorage();
       }
 
-      // 归一化已加载的号码为纯10位数字（若可能）
+      // 为已加载的数据添加 phoneDigits 字段（纯10位数字），但不覆盖显示用的 phoneNumber
       numberList = numberList.map(n => {
         try {
-          const norm = normalizePhone(n.phoneNumber);
-          return { ...n, phoneNumber: norm || n.phoneNumber };
+          const norm = normalizePhone(n.phoneNumber) || '';
+          return { ...n, phoneDigits: norm };
         } catch (e) { return n; }
       });
-      }
     }
 
     // 保存数据到本地存储
@@ -1931,8 +1949,8 @@
       event.preventDefault();
       
       const id = document.getElementById('editId').value;
-  const rawPhone = document.getElementById('editPhone').value;
-  const phoneNumber = normalizePhone(rawPhone);
+    const rawPhone = document.getElementById('editPhone').value;
+    const phoneDigits = normalizePhone(rawPhone);
       const name = document.getElementById('editName').value.trim();
       const age = parseInt(document.getElementById('editAge').value);
       const assigneeSelect = document.getElementById('editAssigneeSelect').value;
@@ -1952,7 +1970,7 @@
       }
       
       // 验证号码格式（归一化为纯10位数字）
-      if (!phoneNumber) {
+      if (!phoneDigits) {
         showToast("请输入有效的美国号码（10位数字，支持 +1 前缀或常见格式）", "error");
         return;
       }
@@ -1964,7 +1982,7 @@
       showLoading("保存中...");
       
       setTimeout(() => { // 模拟网络延迟
-        if (id) {
+  if (id) {
           // 更新现有号码
           const index = numberList.findIndex(item => item.id === parseInt(id));
           if (index !== -1) {
@@ -1973,10 +1991,11 @@
             const oldName = numberList[index].name;
             const oldAge = numberList[index].age;
             const oldPhone = numberList[index].phoneNumber;
-            
-            numberList[index] = {
-              ...numberList[index],
-              phoneNumber,
+
+              numberList[index] = {
+                ...numberList[index],
+                phoneNumber: rawPhone, // 保留显示原始输入格式
+                phoneDigits: phoneDigits || '',
               name,
               age,
               assignee,
@@ -1986,7 +2005,7 @@
             
             // 生成日志内容
             let logContent = [];
-            if (oldPhone !== phoneNumber) logContent.push(`号码从 "${oldPhone}" 变更为 "${phoneNumber}"`);
+            if (oldPhone !== rawPhone) logContent.push(`号码从 "${oldPhone}" 变更为 "${rawPhone}"`);
             if (oldName !== name) logContent.push(`姓名从 "${oldName}" 变更为 "${name}"`);
             if (oldAge !== age) logContent.push(`年龄从 "${oldAge}" 变更为 "${age}"`);
             if (oldAssignee !== assignee) logContent.push(`被分配人从 "${oldAssignee || '未分配'}" 变更为 "${assignee || '未分配'}"`);
@@ -1998,7 +2017,7 @@
           }
         } else {
           // 检查号码是否已存在
-          const exists = numberList.some(item => item.phoneNumber === phoneNumber);
+          const exists = numberList.some(item => (item.phoneDigits || normalizePhone(item.phoneNumber)) === phoneDigits);
           if (exists) {
             hideLoading();
             showToast("该号码已存在", "error");
@@ -2012,7 +2031,8 @@
             
           numberList.push({
             id: newId,
-            phoneNumber, // 存储为纯10位数字
+            phoneNumber: rawPhone, // 存储显示格式
+            phoneDigits: phoneDigits || '',
             name,
             age,
             assignee,
@@ -2269,8 +2289,8 @@
                 continue;
               }
               
-              // 检查是否已存在
-              const exists = numberList.some(item => item.phoneNumber === phoneNumber);
+              // 检查是否已存在（使用归一化 digits）
+              const exists = numberList.some(item => (item.phoneDigits || normalizePhone(item.phoneNumber)) === phoneNumber);
               if (exists) {
                 duplicateCount++;
                 continue;
@@ -2357,8 +2377,8 @@
             
             // 处理每条数据
             validData.forEach(item => {
-              // 检查是否已存在
-              const exists = numberList.some(num => num.phoneNumber === item.phoneNumber);
+              // 检查是否已存在（使用归一化 digits）
+              const exists = numberList.some(num => (num.phoneDigits || normalizePhone(num.phoneNumber)) === item.phoneNumber);
               if (exists) {
                 duplicateCount++;
                 return;
@@ -2849,6 +2869,145 @@
     function hideLoading() {
       document.getElementById('loading').classList.remove('show');
     }
+
+    // ---------- 重复号码检测和管理 ----------
+    // 返回 Map: normalizedPhone -> array of items
+    function scanDuplicates() {
+      const map = new Map();
+      numberList.forEach(item => {
+        const norm = normalizePhone(item.phoneNumber) || String(item.phoneNumber || '');
+        if (!map.has(norm)) map.set(norm, []);
+        map.get(norm).push(item);
+      });
+
+      // 统计重复组数和重复总量（保留每组1个，额外的为重复）
+      let duplicateGroups = 0;
+      let duplicateCount = 0;
+      map.forEach(arr => {
+        if (arr.length > 1) {
+          duplicateGroups++;
+          duplicateCount += (arr.length - 1);
+        }
+      });
+
+      // 更新界面统计
+      const dupEl = document.getElementById('duplicateCount');
+      if (dupEl) dupEl.textContent = duplicateCount;
+
+      return { map, duplicateGroups, duplicateCount };
+    }
+
+    function openDuplicateModal() {
+      const result = scanDuplicates();
+      const container = document.getElementById('duplicateListContainer');
+      container.innerHTML = '';
+
+      if (result.duplicateCount === 0) {
+        container.innerHTML = '<div class="form-hint">未检测到重复号码。</div>';
+      } else {
+        // 为每组重复渲染一个卡片
+        Array.from(result.map.entries()).forEach(([norm, items]) => {
+          if (items.length < 2) return;
+          const group = document.createElement('div');
+          group.style.padding = '10px';
+          group.style.borderBottom = '1px solid #f0f2f5';
+          group.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div><strong>${norm}</strong> （${items.length} 条）</div>
+              <div>
+                <button class="btn btn-sm btn-default" onclick="renderDuplicateGroup('${norm}')">查看</button>
+                <button class="btn btn-sm btn-danger" onclick="deleteDuplicateGroup('${norm}')">删除多余项</button>
+              </div>
+            </div>
+            <div id="dup-group-${norm}" style="margin-top:8px;display:none"></div>
+          `;
+          container.appendChild(group);
+        });
+      }
+
+      document.getElementById('duplicateModal').classList.add('show');
+    }
+
+    function closeDuplicateModal() {
+      document.getElementById('duplicateModal').classList.remove('show');
+    }
+
+    function renderDuplicateGroup(norm) {
+      const target = document.getElementById(`dup-group-${norm}`);
+      if (!target) return;
+      // toggle
+      if (target.style.display === 'block') {
+        target.style.display = 'none';
+        return;
+      }
+      const items = numberList.filter(n => (normalizePhone(n.phoneNumber) || String(n.phoneNumber)) === norm);
+      let html = '<div style="margin-top:8px">';
+      items.forEach(item => {
+        html += `<div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px dashed #f0f2f5;">` +
+                `<div>#${item.id} ${item.phoneNumber} - ${item.name} (${item.age}) ${item.assignee ? ' / ' + item.assignee : ''}</div>` +
+                `<div><button class="btn btn-sm btn-danger" onclick="deleteNumber(${item.id})">删除</button></div>` +
+                `</div>`;
+      });
+      html += '</div>';
+      target.innerHTML = html;
+      target.style.display = 'block';
+    }
+
+    // 删除某个号码组中除第一个之外的所有重复项
+    function deleteDuplicateGroup(norm) {
+      if (!confirm('将删除该组内的重复号码（保留第一个）。确定继续？')) return;
+      const items = numberList.filter(n => (normalizePhone(n.phoneNumber) || String(n.phoneNumber)) === norm);
+      if (items.length < 2) return;
+      // 保留 items[0]，删除其余
+      const idsToDelete = items.slice(1).map(i => i.id);
+      idsToDelete.forEach(id => {
+        const idx = numberList.findIndex(n => n.id === id);
+        if (idx !== -1) {
+          const num = numberList[idx];
+          numberList.splice(idx, 1);
+          addLog(id, '删除（去重）', `删除重复号码 ${num.phoneNumber}（${num.name}）`, 'unused');
+        }
+      });
+      saveNumbersToStorage();
+      renderNumberList();
+      // 重新渲染模态内容
+      openDuplicateModal();
+      showToast('已删除重复号码（保留每组首项）', 'success');
+    }
+
+    function deleteAllDuplicateGroups() {
+      if (!confirm('将删除所有重复号码（每组保留首项），此操作不可撤销。确定继续？')) return;
+      const result = scanDuplicates();
+      const toDelete = [];
+      result.map.forEach((arr, norm) => {
+        if (arr.length > 1) {
+          arr.slice(1).forEach(i => toDelete.push(i.id));
+        }
+      });
+      // 批量删除
+      toDelete.forEach(id => {
+        const idx = numberList.findIndex(n => n.id === id);
+        if (idx !== -1) {
+          const num = numberList[idx];
+          numberList.splice(idx, 1);
+          addLog(id, '删除（去重）', `删除重复号码 ${num.phoneNumber}（${num.name}）`, 'unused');
+        }
+      });
+      saveNumbersToStorage();
+      renderNumberList();
+      openDuplicateModal();
+      showToast('已删除所有重复号码（保留每组首项）', 'success');
+    }
+
+    // 在关键操作后刷新重复计数
+    const _orig_saveNumbersToStorage = saveNumbersToStorage;
+    saveNumbersToStorage = function() { _orig_saveNumbersToStorage(); scanDuplicates(); };
+
+    const _orig_addLog = addLog;
+    addLog = function(numberId, action, content, type) { _orig_addLog(numberId, action, content, type); scanDuplicates(); };
+
+    // 页面加载完成后更新重复计数
+    (function(){ if (typeof window !== 'undefined') { window.addEventListener('load', function(){ setTimeout(scanDuplicates, 50); }); } })();
   </script>
 </body>
 </html>
