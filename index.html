@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>US号码管家 - 动漫风格</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
   <style>
     /* 极简风格基础 */
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -12,15 +14,20 @@
     .container { max-width: 1100px; margin: 0 auto; }
     .page { display: none; }
     .page.active { display: block; }
+  </style>
 
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-          } else {
-            // 包装原生 confirm，捕获可能抛出的 Not implemented
+  <script>
+    // 在不支持或会抛出异常的环境中，为 confirm 提供安全包装（如 jsdom）
+    (function(){
+      try {
+        if (typeof window !== 'undefined') {
+          if (typeof window.confirm === 'function') {
             const __orig_confirm = window.confirm;
             window.confirm = function(msg){
               try { return __orig_confirm(msg); } catch(e) { return true; }
             };
+          } else {
+            window.confirm = function() { return true; };
           }
         }
       } catch(e){}
@@ -50,6 +57,17 @@
       }
       result.push(cur);
       return result;
+    }
+    
+    // 简单的 HTML 转义，防止通过数据注入未转义的 HTML
+    function escapeHtml(input) {
+      if (input === null || input === undefined) return '';
+      return String(input)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }
   </script>
 </head>
@@ -802,16 +820,21 @@
       
       parsedPasteData.forEach((item, index) => {
         const row = document.createElement('div');
-        row.className = `paste-preview-row ${item.isValid ? '' : 'error'}`;
-        
-        row.innerHTML = `
-          <div>${index + 1}</div>
-          <div>${item.phoneNumber}</div>
-          <div>${item.name}</div>
-          <div>${item.age}</div>
-          <div>${item.assignee || '-'}</div>
-        `;
-        
+        row.className = 'paste-preview-row';
+        if (!item.isValid) row.classList.add('error');
+
+        const c1 = document.createElement('div'); c1.textContent = index + 1;
+        const c2 = document.createElement('div'); c2.textContent = item.phoneNumber;
+        const c3 = document.createElement('div'); c3.textContent = item.name;
+        const c4 = document.createElement('div'); c4.textContent = item.age;
+        const c5 = document.createElement('div'); c5.textContent = item.assignee || '-';
+
+        row.appendChild(c1);
+        row.appendChild(c2);
+        row.appendChild(c3);
+        row.appendChild(c4);
+        row.appendChild(c5);
+
         previewContent.appendChild(row);
       });
       
@@ -981,39 +1004,53 @@
     function renderNumberList(filteredData = null) {
       const data = filteredData || numberList;
       const tableBody = document.getElementById('numberTableBody');
-      tableBody.innerHTML = '';
+  tableBody.innerHTML = '';
 
       if (data.length === 0) {
-        tableBody.innerHTML = `
-          <tr>
-            <td colspan="8" style="padding: 30px;">暂无号码数据，请点击"新增号码"或"批量导入"添加</td>
-          </tr>
-        `;
+        const trEmpty = document.createElement('tr');
+        const tdEmpty = document.createElement('td');
+        tdEmpty.colSpan = 9;
+        tdEmpty.style.padding = '30px';
+        tdEmpty.textContent = '暂时无号码数据，请点击"新增号码"或"批量导入"添加';
+        trEmpty.appendChild(tdEmpty);
+        tableBody.appendChild(trEmpty);
       } else {
         data.forEach((item, index) => {
           const tr = document.createElement('tr');
-          // index + 1 表示在当前筛选/排序结果中的序号
-          tr.innerHTML = `
-            <td style="width:40px;"><input type="checkbox" class="rowCheckbox" data-id="${item.id}" onchange="toggleRowSelect(this)"></td>
-            <td class="col-id">${index + 1}</td>
-            <td class="col-phone phone-number">${item.phoneNumber}</td>
-            <td class="col-name">${item.name}</td>
-            <td class="col-age">${item.age}</td>
-            <td class="col-assignee">
-              ${item.assignee 
-                ? `<span class="status-used">${item.assignee}</span>` 
-                : `<span class="status-unused">未分配</span>`
-              }
-            </td>
-            <td class="col-importTime">${item.importTime}</td>
-            <td class="col-fileName">${item.fileName || '-'}</td>
-            <td class="col-actions">
-              <button class="oper-btn" onclick="editNumber(${item.id})">编辑</button>
-              <button class="oper-btn" onclick="viewLog(${item.id})">记录</button>
-              <button class="oper-btn oper-btn-danger" onclick="deleteNumber(${item.id})">删除</button>
-            </td>
-          `;
-          
+          // checkbox
+          const tdCb = document.createElement('td'); tdCb.style.width = '40px';
+          const cb = document.createElement('input'); cb.type = 'checkbox'; cb.className = 'rowCheckbox'; cb.setAttribute('data-id', item.id);
+          cb.onchange = function(){ toggleRowSelect(this); };
+          tdCb.appendChild(cb);
+
+          const tdIndex = document.createElement('td'); tdIndex.className = 'col-id'; tdIndex.textContent = index + 1;
+          const tdPhone = document.createElement('td'); tdPhone.className = 'col-phone phone-number'; tdPhone.textContent = item.phoneNumber;
+          const tdName = document.createElement('td'); tdName.className = 'col-name'; tdName.textContent = item.name;
+          const tdAge = document.createElement('td'); tdAge.className = 'col-age'; tdAge.textContent = item.age;
+          const tdAssignee = document.createElement('td'); tdAssignee.className = 'col-assignee';
+          const spanAssignee = document.createElement('span'); spanAssignee.className = item.assignee ? 'status-used' : 'status-unused';
+          spanAssignee.textContent = item.assignee || '未分配';
+          tdAssignee.appendChild(spanAssignee);
+
+          const tdImport = document.createElement('td'); tdImport.className = 'col-importTime'; tdImport.textContent = item.importTime;
+          const tdFile = document.createElement('td'); tdFile.className = 'col-fileName'; tdFile.textContent = item.fileName || '-';
+
+          const tdActions = document.createElement('td'); tdActions.className = 'col-actions';
+          const btnEdit = document.createElement('button'); btnEdit.className = 'oper-btn'; btnEdit.textContent = '编辑'; btnEdit.onclick = function(){ editNumber(item.id); };
+          const btnLog = document.createElement('button'); btnLog.className = 'oper-btn'; btnLog.textContent = '记录'; btnLog.onclick = function(){ viewLog(item.id); };
+          const btnDel = document.createElement('button'); btnDel.className = 'oper-btn oper-btn-danger'; btnDel.textContent = '删除'; btnDel.onclick = function(){ deleteNumber(item.id); };
+          tdActions.appendChild(btnEdit); tdActions.appendChild(btnLog); tdActions.appendChild(btnDel);
+
+          tr.appendChild(tdCb);
+          tr.appendChild(tdIndex);
+          tr.appendChild(tdPhone);
+          tr.appendChild(tdName);
+          tr.appendChild(tdAge);
+          tr.appendChild(tdAssignee);
+          tr.appendChild(tdImport);
+          tr.appendChild(tdFile);
+          tr.appendChild(tdActions);
+
           tableBody.appendChild(tr);
         });
       }
@@ -1367,7 +1404,7 @@
                                  .sort((a, b) => new Date(b.time) - new Date(a.time));
         
         const timelineContainer = document.getElementById('timelineContainer');
-        timelineContainer.innerHTML = '';
+  timelineContainer.innerHTML = '';
         
         if (numberLogs.length === 0) {
           timelineContainer.innerHTML = `
@@ -1381,21 +1418,15 @@
           `;
         } else {
           numberLogs.forEach(log => {
-            const item = document.createElement('div');
-            item.className = 'timeline-item';
-            
-            item.innerHTML = `
-              <div class="timeline-dot ${log.type}">
-                ${log.type === 'used' ? '✓' : '○'}
-              </div>
-              <div class="timeline-content">
-                <div class="timeline-time">${log.time}</div>
-                <div class="timeline-title">${log.action}操作</div>
-                <div class="timeline-detail">${log.content}</div>
-              </div>
-            `;
-            
-            timelineContainer.appendChild(item);
+            const it = document.createElement('div'); it.className = 'timeline-item';
+            const dot = document.createElement('div'); dot.className = 'timeline-dot ' + (log.type || ''); dot.textContent = log.type === 'used' ? '✓' : '○';
+            const content = document.createElement('div'); content.className = 'timeline-content';
+            const timeEl = document.createElement('div'); timeEl.className = 'timeline-time'; timeEl.textContent = log.time;
+            const titleEl = document.createElement('div'); titleEl.className = 'timeline-title'; titleEl.textContent = log.action + '操作';
+            const detailEl = document.createElement('div'); detailEl.className = 'timeline-detail'; detailEl.textContent = log.content;
+            content.appendChild(timeEl); content.appendChild(titleEl); content.appendChild(detailEl);
+            it.appendChild(dot); it.appendChild(content);
+            timelineContainer.appendChild(it);
           });
         }
         
@@ -1909,7 +1940,7 @@
     function renderPersonList(filteredData = null) {
       const data = filteredData || personList;
       const container = document.getElementById('personListContainer');
-      container.innerHTML = '';
+  container.innerHTML = '';
 
       if (data.length === 0) {
         container.innerHTML = `
@@ -1919,27 +1950,21 @@
         `;
       } else {
         data.forEach(person => {
-          const card = document.createElement('div');
-          card.className = 'person-card';
-          
-          card.innerHTML = `
-            <div class="person-name">
-              <span>${person.name}</span>
-              <div>
-                <button class="btn btn-sm btn-default" onclick="editPerson(${person.id})">
-                  <i class="fa fa-edit"></i>
-                </button>
-                <button class="btn btn-sm btn-danger" onclick="deletePerson(${person.id})">
-                  <i class="fa fa-trash"></i>
-                </button>
-              </div>
-            </div>
-            <div class="person-info">用途：${person.purpose || '未设置'}</div>
-            <div class="person-info">显示名：${person.displayName}</div>
-            ${person.remark ? `<div class="person-info">备注：${person.remark}</div>` : ''}
-            <div class="person-info">关联号码：${getPersonNumberCount(person.id)}</div>
-          `;
-          
+          const card = document.createElement('div'); card.className = 'person-card';
+          const header = document.createElement('div'); header.className = 'person-name';
+          const nameSpan = document.createElement('span'); nameSpan.textContent = person.name;
+          const actionsDiv = document.createElement('div');
+          const btnE = document.createElement('button'); btnE.className = 'btn btn-sm btn-default'; btnE.textContent = '\u7f16\u8f91'; btnE.onclick = function(){ editPerson(person.id); };
+          const btnD = document.createElement('button'); btnD.className = 'btn btn-sm btn-danger'; btnD.textContent = '\u5220\u9664'; btnD.onclick = function(){ deletePerson(person.id); };
+          actionsDiv.appendChild(btnE); actionsDiv.appendChild(btnD);
+          header.appendChild(nameSpan); header.appendChild(actionsDiv);
+
+          const info1 = document.createElement('div'); info1.className = 'person-info'; info1.textContent = '用途：' + (person.purpose || '未设置');
+          const info2 = document.createElement('div'); info2.className = 'person-info'; info2.textContent = '显示名：' + person.displayName;
+          card.appendChild(header); card.appendChild(info1); card.appendChild(info2);
+          if (person.remark) { const infoR = document.createElement('div'); infoR.className = 'person-info'; infoR.textContent = '备注：' + person.remark; card.appendChild(infoR); }
+          const infoCount = document.createElement('div'); infoCount.className = 'person-info'; infoCount.textContent = '关联号码：' + getPersonNumberCount(person.id); card.appendChild(infoCount);
+
           container.appendChild(card);
         });
       }
@@ -2160,22 +2185,24 @@
       if (result.duplicateCount === 0) {
         container.innerHTML = '<div class="form-hint">未检测到重复号码。</div>';
       } else {
-        // 为每组重复渲染一个卡片
         Array.from(result.map.entries()).forEach(([norm, items]) => {
           if (items.length < 2) return;
           const group = document.createElement('div');
           group.style.padding = '10px';
           group.style.borderBottom = '1px solid #f0f2f5';
-          group.innerHTML = `
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <div><strong>${norm}</strong> （${items.length} 条）</div>
-              <div>
-                <button class="btn btn-sm btn-default" onclick="renderDuplicateGroup('${norm}')">查看</button>
-                <button class="btn btn-sm btn-danger" onclick="deleteDuplicateGroup('${norm}')">删除多余项</button>
-              </div>
-            </div>
-            <div id="dup-group-${norm}" style="margin-top:8px;display:none"></div>
-          `;
+
+          const row = document.createElement('div'); row.style.display = 'flex'; row.style.justifyContent = 'space-between'; row.style.alignItems = 'center';
+          const left = document.createElement('div'); const strong = document.createElement('strong'); strong.textContent = norm; left.appendChild(strong); left.appendChild(document.createTextNode(` (${items.length} 条)`));
+          const right = document.createElement('div');
+          const btnView = document.createElement('button'); btnView.className = 'btn btn-sm btn-default'; btnView.textContent = '查看'; btnView.onclick = function(){ renderDuplicateGroup(norm); };
+          const btnDel = document.createElement('button'); btnDel.className = 'btn btn-sm btn-danger'; btnDel.textContent = '删除多余项'; btnDel.onclick = function(){ deleteDuplicateGroup(norm); };
+          right.appendChild(btnView); right.appendChild(btnDel);
+
+          row.appendChild(left); row.appendChild(right);
+          group.appendChild(row);
+
+          const details = document.createElement('div'); details.id = 'dup-group-' + norm; details.style.marginTop = '8px'; details.style.display = 'none';
+          group.appendChild(details);
           container.appendChild(group);
         });
       }
@@ -2196,15 +2223,18 @@
         return;
       }
       const items = numberList.filter(n => (normalizePhone(n.phoneNumber) || String(n.phoneNumber)) === norm);
-      let html = '<div style="margin-top:8px">';
+      const wrapper = document.createElement('div'); wrapper.style.marginTop = '8px';
       items.forEach(item => {
-        html += `<div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px dashed #f0f2f5;">` +
-                `<div>#${item.id} ${item.phoneNumber} - ${item.name} (${item.age}) ${item.assignee ? ' / ' + item.assignee : ''}</div>` +
-                `<div><button class="btn btn-sm btn-danger" onclick="deleteNumber(${item.id})">删除</button></div>` +
-                `</div>`;
+        const row = document.createElement('div');
+        row.style.display = 'flex'; row.style.justifyContent = 'space-between'; row.style.padding = '6px 0'; row.style.borderTop = '1px dashed #f0f2f5';
+        const left = document.createElement('div'); left.textContent = `#${item.id} ${item.phoneNumber} - ${item.name} (${item.age})` + (item.assignee ? ' / ' + item.assignee : '');
+        const right = document.createElement('div'); const btn = document.createElement('button'); btn.className = 'btn btn-sm btn-danger'; btn.textContent = '删除'; btn.onclick = function(){ deleteNumber(item.id); };
+        right.appendChild(btn);
+        row.appendChild(left); row.appendChild(right);
+        wrapper.appendChild(row);
       });
-      html += '</div>';
-      target.innerHTML = html;
+      target.innerHTML = '';
+      target.appendChild(wrapper);
       target.style.display = 'block';
     }
 
