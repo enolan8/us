@@ -6,43 +6,15 @@
   <title>US号码管家 - 动漫风格</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Nunito', 'Arial Rounded MT Bold', '微软雅黑', sans-serif;
-    }
-    body {
-      min-height: 100vh;
-      background: linear-gradient(135deg, #aee2ff 0%, #f6d6ff 100%);
-      padding: 20px;
-      color: #1f2937;
-      line-height: 1.5;
-      position: relative;
-      overflow-x: hidden;
-    }
-    .page {
-      display: none;
-    }
-    .page.active {
-      display: block;
-      animation: fadeIn 0.3s ease;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
+    /* 极简风格基础 */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color: #111; background: #fff; padding: 18px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .page { display: none; }
+    .page.active { display: block; }
 
-    /* 卡片与容器 */
-    .card {
-      background: linear-gradient(120deg, #fff7fa 0%, #e3f6ff 100%);
-      border-radius: 24px;
-      box-shadow: 0 6px 24px rgba(160, 226, 255, 0.15), 0 1.5px 6px rgba(246, 214, 255, 0.12);
-      padding: 24px;
-      margin-bottom: 24px;
-      transition: box-shadow 0.3s, transform 0.2s;
-      animation: cardPop 0.5s cubic-bezier(.68,-0.55,.27,1.55);
-    }
+    /* 极简卡片：浅边框与内边距 */
+    .card { background: #fff; border: 1px solid #e6e6e6; border-radius: 6px; padding: 14px; margin-bottom: 14px; }
     @keyframes cardPop {
       0% { transform: scale(0.96); box-shadow: 0 0 0 rgba(0,0,0,0); }
       80% { transform: scale(1.04); }
@@ -52,78 +24,18 @@
       box-shadow: 0 12px 32px rgba(160, 226, 255, 0.22), 0 3px 12px rgba(246, 214, 255, 0.18);
       transform: translateY(-2px) scale(1.02);
     }
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-    .section-title {
-      font-size: 16px;
-      margin-bottom: 15px;
-      color: #303133;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    /* .container 已在顶部轻量声明 */
+    .section-title { font-size: 15px; margin-bottom: 12px; font-weight: 600; color: #222; }
 
     /* 按钮样式 */
-    .btn {
-      padding: 10px 20px;
-      border-radius: 16px;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s, box-shadow 0.3s;
-      font-weight: 700;
-      background: linear-gradient(90deg, #aee2ff 0%, #f6d6ff 100%);
-      box-shadow: 0 2px 8px rgba(160, 226, 255, 0.12);
-    }
-    .btn:active {
-      transform: scale(0.96);
-    }
-    .btn:hover {
-      transform: translateY(-2px) scale(1.04);
-      box-shadow: 0 6px 18px rgba(160, 226, 255, 0.18);
-    }
-    .btn-primary {
-  background: linear-gradient(90deg, #7fbcff 0%, #f6d6ff 100%);
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(127, 188, 255, 0.18);
-    }
-    .btn-success {
-  background: linear-gradient(90deg, #a8ff78 0%, #78ffd6 100%);
-  color: #fff;
-    }
-    .btn-default {
-  background: linear-gradient(90deg, #f5f7fa 0%, #e3f6ff 100%);
-  color: #606266;
-    }
-    .btn-danger {
-  background: linear-gradient(90deg, #ffb6b9 0%, #f6d6ff 100%);
-  color: #fff;
-    }
-    .btn-sm {
-      padding: 4px 10px;
-      font-size: 12px;
-    }
+    .btn { padding: 8px 12px; border-radius: 6px; border: 1px solid #dcdcdc; background: #fafafa; font-weight: 600; cursor: pointer; }
+    .btn-primary { background: #111; color: #fff; border-color: #111; }
+    .btn-danger { background: #b00; color: #fff; border-color: #b00; }
+    .btn-sm { padding: 6px 8px; font-size: 13px; }
 
     /* 输入框与选择器 */
-    .input, .select {
-  padding: 10px 16px;
-  border-radius: 16px;
-  border: 1.5px solid #aee2ff;
-  font-size: 16px;
-  width: 100%;
-  transition: border 0.2s, box-shadow 0.3s;
-    }
-    .input:focus, .select:focus {
-  border-color: #7fbcff;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(127, 188, 255, 0.18);
-    }
+    .input, .select { padding: 8px 10px; border-radius: 4px; border: 1px solid #dcdcdc; font-size: 14px; width: 100%; }
+    .input:focus, .select:focus { outline: none; border-color: #bfbfbf; }
     .input-search {
       flex: 1;
       max-width: 400px;
@@ -237,7 +149,6 @@
       .col-importTime, .col-fileName { display: none; }
       .table td.col-importTime, .table td.col-fileName { display: none; }
     }
-*** End Patch
     .table th:hover {
       background-color: #eef3fa;
     }
@@ -467,6 +378,76 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+    /* 全局：禁用动画与过渡，移除动态效果 */
+    * {
+      -webkit-animation: none !important;
+      animation: none !important;
+      -webkit-transition: none !important;
+      transition: none !important;
+    }
+
+    /* ========== 极简风覆盖样式 ========== */
+    :root {
+      --bg: #ffffff;
+      --card-bg: #ffffff;
+      --muted: #6b7280;
+      --text: #0f172a;
+      --border: #e6e6e6;
+      --primary: #0f172a;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+
+    /* 卡片与容器：去除渐变、阴影与夸张圆角 */
+    .card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: none;
+      padding: 16px;
+      border: 1px solid var(--border);
+    }
+
+    /* 按钮：简洁边框或纯色小按钮 */
+    .btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--primary);
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-weight: 600;
+      box-shadow: none;
+    }
+    .btn-primary { background: var(--primary); color: #fff; border: none; }
+    .btn-success { background: #0ea5a4; color: #fff; border: none; }
+    .btn-danger { background: #ef4444; color: #fff; border: none; }
+    .btn-default { background: transparent; color: var(--muted); }
+
+    /* 表头/表格：简洁边框 */
+    .table th, .table td { border-bottom: 1px solid var(--border); padding: 10px; }
+    .table { border-collapse: collapse; }
+    .table-container { overflow: auto; }
+
+    /* logo 与装饰：隐藏图标与页脚吉祥物以简化界面 */
+    .logo-icon { display: none !important; }
+    svg[width="120"][height="120"] { display: none !important; }
+
+    /* 去除多余的视觉样式 */
+    .timeline-content, .person-card { box-shadow: none; border: 1px solid var(--border); background: transparent; }
+    .status-used, .status-unused { color: var(--muted); font-weight: 500; }
+
+    /* 更紧凑的表单、输入 */
+    .input, .select { border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; }
+
+    /* 保持响应式，不改变布局 */
+    @media (max-width: 768px) {
+      .card { padding: 12px; }
+    }
+
+    /* ========== 结束极简覆盖 ========== */
 
     /* 批量操作模态框 */
     .modal-backdrop {
@@ -746,18 +727,7 @@
 </head>
 <body>
   <div class="container">
-    <!-- 动漫风底部吉祥物 -->
-    <div style="position:fixed;bottom:0;right:0;z-index:0;pointer-events:none;">
-      <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
-        <ellipse cx="60" cy="110" rx="40" ry="10" fill="#aee2ff"/>
-        <circle cx="60" cy="70" r="35" fill="#fff7fa" stroke="#aee2ff" stroke-width="3"/>
-        <ellipse cx="60" cy="80" rx="18" ry="10" fill="#f6d6ff"/>
-        <circle cx="60" cy="65" r="15" fill="#f6d6ff"/>
-        <ellipse cx="52" cy="62" rx="3" ry="2" fill="#7fbcff"/>
-        <ellipse cx="68" cy="62" rx="3" ry="2" fill="#7fbcff"/>
-        <path d="M54 75 Q60 80 66 75" stroke="#7fbcff" stroke-width="2" fill="none"/>
-      </svg>
-    </div>
+    <!-- 装饰性吉祥物已移除以保持极简风格 -->
     <!-- 提示框组件 -->
     <div class="toast" id="toast"></div>
     
@@ -952,32 +922,14 @@
       <!-- 顶部导航 -->
       <div class="header">
         <div class="logo">
-          <div class="logo-icon">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-              <ellipse cx="16" cy="28" rx="12" ry="4" fill="#aee2ff"/>
-              <circle cx="16" cy="16" r="12" fill="#fff7fa" stroke="#aee2ff" stroke-width="2"/>
-              <ellipse cx="16" cy="19" rx="6" ry="3" fill="#f6d6ff"/>
-              <circle cx="16" cy="14" r="5" fill="#f6d6ff"/>
-              <ellipse cx="13" cy="13" rx="1.2" ry="0.8" fill="#7fbcff"/>
-              <ellipse cx="19" cy="13" rx="1.2" ry="0.8" fill="#7fbcff"/>
-              <path d="M14 19 Q16 21 18 19" stroke="#7fbcff" stroke-width="1.5" fill="none"/>
-            </svg>
-          </div>
+          <div class="logo-icon" aria-hidden="true"></div>
           US号码管家
         </div>
         <div class="header-actions">
-          <button class="btn btn-success" onclick="showAddForm()">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="10" fill="#aee2ff"/><path d="M10 5v10M5 10h10" stroke="#7fbcff" stroke-width="2"/></svg> 新增号码
-          </button>
-          <button class="btn btn-primary" onclick="openImportModal()">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="4" fill="#f6d6ff"/><path d="M10 7v6M7 10h6" stroke="#7fbcff" stroke-width="2"/></svg> 批量导入
-          </button>
-          <button class="btn btn-primary" onclick="openExportModal()">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="4" fill="#f6d6ff"/><path d="M10 13V7M7 10h6" stroke="#7fbcff" stroke-width="2"/></svg> 批量导出
-          </button>
-          <button class="btn btn-default" onclick="refreshList()">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="#aee2ff" stroke-width="2"/><path d="M10 3v4M10 13v4M3 10h4M13 10h4" stroke="#7fbcff" stroke-width="2"/></svg> 刷新
-          </button>
+          <button class="btn btn-success" onclick="showAddForm()">新增号码</button>
+          <button class="btn btn-primary" onclick="openImportModal()">批量导入</button>
+          <button class="btn btn-primary" onclick="openExportModal()">批量导出</button>
+          <button class="btn btn-default" onclick="refreshList()">刷新</button>
           <button class="btn btn-danger" id="bulkDeleteBtn" onclick="deleteSelectedNumbers()" style="display:none;">
             批量删除
           </button>
@@ -986,12 +938,8 @@
 
       <!-- 主导航 -->
       <div class="main-nav">
-        <button class="btn btn-primary" onclick="showPage('listPage')">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="4" fill="#aee2ff"/><rect x="5" y="5" width="8" height="8" rx="2" fill="#fff7fa"/></svg> 号码管理
-        </button>
-        <button class="btn btn-default" onclick="showPage('personPage')">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><ellipse cx="6" cy="7" rx="3" ry="3" fill="#aee2ff"/><ellipse cx="12" cy="7" rx="3" ry="3" fill="#aee2ff"/><rect x="3" y="11" width="12" height="4" rx="2" fill="#fff7fa"/></svg> 人员管理
-        </button>
+        <button class="btn btn-primary" onclick="showPage('listPage')">号码管理</button>
+        <button class="btn btn-default" onclick="showPage('personPage')">人员管理</button>
       </div>
 
       <!-- 筛选区 -->
@@ -1981,8 +1929,8 @@
       
       showLoading("保存中...");
       
-      setTimeout(() => { // 模拟网络延迟
-  if (id) {
+    // 同步执行（移除模拟网络延迟）
+    if (id) {
           // 更新现有号码
           const index = numberList.findIndex(item => item.id === parseInt(id));
           if (index !== -1) {
@@ -2055,7 +2003,7 @@
         renderNumberList();
         returnToList();
         hideLoading();
-      }, 500);
+      
     }
 
     // 添加日志记录
@@ -2135,7 +2083,7 @@
       if (confirm(`确定要删除号码 ${number.phoneNumber}（${number.name}，${number.age}岁）吗？相关记录会被保留。`)) {
         showLoading("删除中...");
         
-        setTimeout(() => { // 模拟网络延迟
+        // 同步执行（移除模拟网络延迟）
           const index = numberList.findIndex(item => item.id === id);
           if (index !== -1) {
             numberList.splice(index, 1);
@@ -2148,7 +2096,6 @@
             showToast('号码已删除', "success");
           }
           hideLoading();
-        }, 500);
       }
     }
 
@@ -2156,13 +2103,12 @@
     function refreshList() {
       showLoading("刷新中...");
       
-      setTimeout(() => { // 模拟网络请求
-        loadAllData();
-        renderNumberList();
-        renderPersonList();
-        showToast('数据已刷新', "success");
-        hideLoading();
-      }, 800);
+      // 同步执行（移除模拟网络请求延迟）
+      loadAllData();
+      renderNumberList();
+      renderPersonList();
+      showToast('数据已刷新', "success");
+      hideLoading();
     }
 
     // 批量导入相关函数
@@ -2365,8 +2311,8 @@
         
         showLoading("导入中...");
         
-        setTimeout(() => {
-          try {
+        // 同步执行（移除模拟延迟）
+        try {
             const importedNumbers = [];
             let successCount = 0;
             let duplicateCount = 0;
@@ -2432,8 +2378,7 @@
             showToast(`导入失败：${error.message}`, "error");
           } finally {
             hideLoading();
-          }
-        }, 800);
+      }
       }
     }
 
@@ -2487,7 +2432,7 @@
       
       showLoading("导出中...");
       
-      setTimeout(() => { // 模拟处理延迟
+      // 同步执行（移除模拟处理延迟）
         let exportData;
         
         // 根据导出范围获取数据
@@ -2595,7 +2540,6 @@
         showToast(`导出成功，共${actualCount}条数据`, "success");
         closeExportModal();
         hideLoading();
-      }, 800);
     }
 
     // 获取当前筛选后的数据
@@ -2731,83 +2675,71 @@
       document.getElementById('personFormCard').style.display = 'none';
     }
 
-    // 保存人员
+    // 保存人员（同步执行，移除延迟）
     function savePerson(event) {
       event.preventDefault();
-      
+
       const id = document.getElementById('personId').value;
       const name = document.getElementById('personName').value.trim();
       const purpose = document.getElementById('personPurpose').value.trim();
       const remark = document.getElementById('personRemark').value.trim();
-      
+
       if (!name) {
         showToast("请输入人员姓名", "error");
         return;
       }
-      
+
       // 生成显示名
       const displayName = purpose ? `${name}（${purpose}）` : name;
-      
+
       showLoading("保存中...");
-      
-      setTimeout(() => { // 模拟网络延迟
-        if (id) {
-          // 更新现有人员
-          const index = personList.findIndex(p => p.id === parseInt(id));
-          if (index !== -1) {
-            const oldDisplayName = personList[index].displayName;
-            personList[index] = {
-              ...personList[index],
-              name,
-              purpose,
-              remark,
-              displayName
-            };
-            
-            // 如果显示名变了，更新相关号码的被分配人
-            if (oldDisplayName !== displayName) {
-              numberList.forEach(num => {
-                if (num.assignee === oldDisplayName) {
-                  num.assignee = displayName;
-                  // 添加日志记录
-                  addLog(num.id, '人员信息更新', `被分配人名称从 "${oldDisplayName}" 变更为 "${displayName}"`, num.assignee ? 'used' : 'unused');
-                }
-              });
-              saveNumbersToStorage();
-            }
-            
-            showToast('人员信息更新成功', "success");
-          }
-        } else {
-          // 新增人员
-          const newId = personList.length > 0 
-            ? Math.max(...personList.map(p => p.id)) + 1 
-            : 1;
-            
-          personList.push({
-            id: newId,
+
+      if (id) {
+        // 更新现有人员
+        const index = personList.findIndex(p => p.id === parseInt(id));
+        if (index !== -1) {
+          const oldDisplayName = personList[index].displayName;
+          personList[index] = {
+            ...personList[index],
             name,
             purpose,
             remark,
             displayName
-          });
-          
-          showToast(`人员 "${displayName}" 新增成功`, "success");
+          };
+
+          // 如果显示名变了，更新相关号码的被分配人
+          if (oldDisplayName !== displayName) {
+            numberList.forEach(num => {
+              if (num.assignee === oldDisplayName) {
+                num.assignee = displayName;
+                // 添加日志记录
+                addLog(num.id, '人员信息更新', `被分配人名称从 "${oldDisplayName}" 变更为 "${displayName}"`, num.assignee ? 'used' : 'unused');
+              }
+            });
+            saveNumbersToStorage();
+          }
+
+          showToast('人员信息更新成功', "success");
         }
-        
-        // 保存数据并刷新列表
-        savePersonsToStorage();
-        renderPersonList();
-        hidePersonForm();
-        hideLoading();
-      }, 500);
+      } else {
+        // 新增人员
+        const newId = personList.length > 0 ? Math.max(...personList.map(p => p.id)) + 1 : 1;
+        personList.push({ id: newId, name, purpose, remark, displayName });
+        showToast(`人员 "${displayName}" 新增成功`, "success");
+      }
+
+      // 保存数据并刷新列表
+      savePersonsToStorage();
+      renderPersonList();
+      hidePersonForm();
+      hideLoading();
     }
 
     // 删除人员
     function deletePerson(id) {
       const person = personList.find(p => p.id === id);
       if (!person) return;
-      
+
       // 检查是否有关联的号码
       const relatedNumbers = numberList.filter(num => num.assignee === person.displayName).length;
       if (relatedNumbers > 0) {
@@ -2819,34 +2751,31 @@
           return;
         }
       }
-      
+
       showLoading("删除中...");
-      
-      setTimeout(() => { // 模拟网络延迟
-        const index = personList.findIndex(p => p.id === id);
-        if (index !== -1) {
-          // 更新关联号码
-          if (relatedNumbers > 0) {
-            numberList.forEach(num => {
-              if (num.assignee === person.displayName) {
-                num.assignee = "";
-                // 添加日志记录
-                addLog(num.id, '解除分配', `原被分配人 "${person.displayName}" 已删除，自动解除分配`, 'unused');
-              }
-            });
-            saveNumbersToStorage();
-          }
-          
-          // 删除人员
-          personList.splice(index, 1);
-          savePersonsToStorage();
-          
-          renderPersonList();
-          renderNumberList(); // 刷新号码列表，显示更新后的分配状态
-          showToast(`人员 "${person.displayName}" 已删除`, "success");
+      const index = personList.findIndex(p => p.id === id);
+      if (index !== -1) {
+        // 更新关联号码并添加日志
+        if (relatedNumbers > 0) {
+          numberList.forEach(num => {
+            if (num.assignee === person.displayName) {
+              num.assignee = "";
+              addLog(num.id, '解除分配', `原被分配人 "${person.displayName}" 已删除，自动解除分配`, 'unused');
+            }
+          });
+          saveNumbersToStorage();
         }
-        hideLoading();
-      }, 500);
+
+        // 从人员列表中移除
+        personList.splice(index, 1);
+        savePersonsToStorage();
+
+        renderPersonList();
+        renderNumberList(); // 刷新号码列表，显示更新后的分配状态
+        showToast(`人员 "${person.displayName}" 已删除`, "success");
+      }
+
+      hideLoading();
     }
 
     // 提示框和加载动画控制
@@ -2856,9 +2785,7 @@
       toast.className = 'toast'; // 重置样式
       toast.classList.add('show', `toast-${type}`);
       
-      setTimeout(() => {
-        toast.classList.remove('show');
-      }, 3000);
+      // 不自动移除 show，以遵循“无动态效果”的要求；外部逻辑可在需要时调用 hideLoading()/手动移除
     }
 
     function showLoading(text = "处理中...") {
@@ -3006,8 +2933,8 @@
     const _orig_addLog = addLog;
     addLog = function(numberId, action, content, type) { _orig_addLog(numberId, action, content, type); scanDuplicates(); };
 
-    // 页面加载完成后更新重复计数
-    (function(){ if (typeof window !== 'undefined') { window.addEventListener('load', function(){ setTimeout(scanDuplicates, 50); }); } })();
+    // 页面加载完成后更新重复计数（同步调用）
+    (function(){ if (typeof window !== 'undefined') { window.addEventListener('load', function(){ scanDuplicates(); }); } })();
   </script>
 </body>
 </html>
